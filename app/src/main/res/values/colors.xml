@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="app_screen_background">#0a1628</color>
+    <color name="pool_accent">#00a8e8</color>
+    <color name="pool_accent_variant">#0077b6</color>
+    <color name="ic_launcher_background">#0077b6</color>
+    <color name="on_pool_accent">#001219</color>
+    <color name="task_card_background">#F7F9FC</color>
+    <color name="task_card_title">#1B1B1F</color>
+    <color name="task_card_subtitle">#5C5F66</color>
+    <color name="task_row_background">#FFFFFF</color>
+    <color name="task_row_stroke">#E0E3EB</color>
+    <color name="task_row_title">#1B1B1F</color>
+    <color name="task_row_subtitle">#5C5F66</color>
+
+    <!-- Maintenance Details: #41A4FB @ 60% opacity = #99 + RGB; cards #EEF4B5 -->
+    <color name="maint_background">#9941A4FB</color>
+    <color name="maint_surface">#EEF4B5</color>
+    <color name="maint_text_primary">#111827</color>
+    <color name="maint_text_secondary">#6B7280</color>
+    <color name="maint_text_muted">#9CA3AF</color>
+    <color name="maint_outline">#C4CC88</color>
+    <color name="maint_fab">#2563EB</color>
+    <!-- Purple checkbox when checked (mockup) -->
+    <color name="maint_checkbox_checked">#6D28D9</color>
+    <color name="maint_amount_chip_bg">#D9D9D9</color>
+    <color name="maint_checkbox_unchecked">#D1D5DB</color>
+    <color name="maint_button_outline">#2563EB</color>
+    <!-- Bottom action bar (muted lavender-grey) -->
+    <color name="maint_bottom_bar_bg">#DCD4E8</color>
+</resources>

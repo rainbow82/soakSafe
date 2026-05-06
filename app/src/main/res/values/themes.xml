@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.SoakSafe" parent="Theme.Material3.Dark.NoActionBar">
+        <item name="colorPrimary">@color/pool_accent</item>
+        <item name="colorPrimaryContainer">@color/pool_accent_variant</item>
+        <item name="colorOnPrimary">@color/on_pool_accent</item>
+        <!-- Same blue wash as Maintenance Details -->
+        <item name="android:windowBackground">@color/maint_background</item>
+        <item name="android:colorBackground">@color/maint_background</item>
+        <item name="colorSurface">@color/maint_background</item>
+        <item name="colorSurfaceDim">@color/maint_background</item>
+        <item name="colorSurfaceBright">@color/maint_background</item>
+        <item name="colorSurfaceContainerLowest">@color/maint_background</item>
+        <item name="colorSurfaceContainerLow">@color/maint_background</item>
+        <item name="colorSurfaceContainer">@color/maint_background</item>
+        <item name="colorSurfaceContainerHigh">@color/maint_background</item>
+        <item name="colorSurfaceContainerHighest">@color/maint_background</item>
+        <item name="android:statusBarColor">@color/maint_background</item>
+        <item name="android:navigationBarColor">@color/maint_background</item>
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:windowLightNavigationBar">true</item>
+    </style>
+
+    <!-- Light surface for Maintenance Details (matches typical Figma mobile frames) -->
+    <style name="Theme.SoakSafe.Maintenance" parent="Theme.Material3.Light.NoActionBar">
+        <item name="colorPrimary">@color/maint_fab</item>
+        <item name="colorOnPrimary">@android:color/white</item>
+        <item name="colorSurface">@color/maint_surface</item>
+        <item name="android:colorBackground">@color/maint_background</item>
+        <item name="android:windowBackground">@color/maint_background</item>
+        <item name="colorSurfaceContainerLowest">@color/maint_background</item>
+        <item name="colorSurfaceContainerLow">@color/maint_surface</item>
+        <item name="colorSurfaceContainer">@color/maint_surface</item>
+        <item name="colorSurfaceContainerHigh">@color/maint_surface</item>
+        <item name="colorSurfaceContainerHighest">@color/maint_surface</item>
+        <item name="android:statusBarColor">@color/maint_background</item>
+        <item name="android:navigationBarColor">@color/maint_bottom_bar_bg</item>
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:windowLightNavigationBar">true</item>
+    </style>
+</resources>

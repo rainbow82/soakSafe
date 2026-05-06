@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="TextAppearance.SoakSafe.ToolbarTitle" parent="TextAppearance.Material3.TitleLarge">
+        <item name="android:textSize">20sp</item>
+        <item name="android:letterSpacing">0</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="TextAppearance.SoakSafe.CardTitle" parent="TextAppearance.Material3.HeadlineSmall">
+        <item name="android:textColor">@color/maint_text_primary</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:letterSpacing">0</item>
+    </style>
+
+    <style name="TextAppearance.SoakSafe.SectionLabel" parent="TextAppearance.Material3.TitleMedium">
+        <item name="android:textColor">@color/maint_text_primary</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+</resources>
