@@ -59,4 +59,38 @@ public final class SoakSafeDatabaseMigrations {
             );
         }
     };
+
+    public static final Migration MIGRATION_4_5 = new Migration(4, 5) {
+        @Override
+        public void migrate(@NonNull SupportSQLiteDatabase db) {
+            db.execSQL(
+                    "CREATE TABLE IF NOT EXISTS `maintenance_events` ("
+                            + "`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, "
+                            + "`userId` INTEGER NOT NULL, "
+                            + "`event_type` TEXT NOT NULL, "
+                            + "`event_time_millis` INTEGER NOT NULL, "
+                            + "`dateMillis` INTEGER NOT NULL, "
+                            + "`vacuum` INTEGER NOT NULL, "
+                            + "`clean_skimmer` INTEGER NOT NULL, "
+                            + "`add_water` INTEGER NOT NULL, "
+                            + "`brush_walls` INTEGER NOT NULL, "
+                            + "`chlorine` REAL NOT NULL, "
+                            + "`ph_up` REAL NOT NULL, "
+                            + "`ph_down` REAL NOT NULL, "
+                            + "`no_phos` REAL NOT NULL, "
+                            + "FOREIGN KEY(`userId`) REFERENCES `users`(`id`) "
+                            + "ON UPDATE NO ACTION ON DELETE CASCADE)"
+            );
+            db.execSQL("CREATE INDEX IF NOT EXISTS `index_maintenance_events_userId` "
+                    + "ON `maintenance_events` (`userId`)");
+        }
+    };
+
+    public static final Migration MIGRATION_5_6 = new Migration(5, 6) {
+        @Override
+        public void migrate(@NonNull SupportSQLiteDatabase db) {
+            db.execSQL("CREATE INDEX IF NOT EXISTS `index_maintenance_events_userId` "
+                    + "ON `maintenance_events` (`userId`)");
+        }
+    };
 }

@@ -56,6 +56,9 @@
     <string name="chemical_ph_down">pH down</string>
     <string name="chemical_no_phos">No phos</string>
     <string name="save_chemicals">Save chemicals</string>
+    <string name="save_maintenance">Save</string>
+    <string name="maintenance_saved">Maintenance saved.</string>
+    <string name="chemical_amount_hint">Amt</string>
     <string name="error_chemical_number">Enter valid numbers for chemicals (or leave blank for zero).</string>
     <string name="chemicals_saved">Chemicals saved.</string>
     <string name="maintenance_summary_dialog_title">Maintenance summary</string>
@@ -64,4 +67,10 @@
     <string name="error_login_empty">Enter your username and password.</string>
     <string name="error_username_taken">That username is already in use. Pick another.</string>
     <string name="error_create_empty">Enter your full name, username, and password.</string>
+    <string name="maintenance_report_title">Maintenance Report</string>
+    <string name="report_search_hint">Search tasks and chemicals</string>
+    <string name="report_no_events">No maintenance events saved yet.</string>
+    <string name="report_no_search_results">No entries match your search.</string>
+    <string name="report_task_done_content_description">Completed</string>
+    <string name="report_card_subtitle">Logged maintenance snapshot</string>
 </resources>

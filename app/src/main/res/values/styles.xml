@@ -16,4 +16,30 @@
         <item name="android:textColor">@color/maint_text_primary</item>
         <item name="android:textStyle">bold</item>
     </style>
+
+    <style name="TextAppearance.SoakSafe.ReportCardTitle" parent="TextAppearance.Material3.TitleMedium">
+        <item name="android:textColor">@color/report_text_dark</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">17sp</item>
+        <item name="android:letterSpacing">0.01</item>
+    </style>
+
+    <style name="TextAppearance.SoakSafe.ReportCardSubtitle" parent="TextAppearance.Material3.LabelMedium">
+        <item name="android:textColor">@color/report_text_secondary_dark</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:letterSpacing">0.01</item>
+    </style>
+
+    <style name="TextAppearance.SoakSafe.ReportRowLabel" parent="TextAppearance.Material3.BodyMedium">
+        <item name="android:textColor">@color/report_text_dark</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="TextAppearance.SoakSafe.ReportRowValue" parent="TextAppearance.Material3.LabelLarge">
+        <item name="android:textColor">@color/report_text_dark</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">13sp</item>
+        <item name="android:letterSpacing">0.02</item>
+    </style>
 </resources>

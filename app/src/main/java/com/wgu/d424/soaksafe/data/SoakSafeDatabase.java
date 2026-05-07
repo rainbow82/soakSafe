@@ -7,9 +7,10 @@ import androidx.room.RoomDatabase;
         entities = {
                 User.class,
                 MaintenanceDetail.class,
-                MaintenanceChecklist.class
+                MaintenanceChecklist.class,
+                MaintenanceEvent.class
         },
-        version = 4,
+        version = 6,
         exportSchema = false
 )
 public abstract class SoakSafeDatabase extends RoomDatabase {
@@ -19,4 +20,6 @@ public abstract class SoakSafeDatabase extends RoomDatabase {
     public abstract MaintenanceDetailDao maintenanceDetailDao();
 
     public abstract MaintenanceChecklistDao maintenanceChecklistDao();
+
+    public abstract MaintenanceEventDao maintenanceEventDao();
 }

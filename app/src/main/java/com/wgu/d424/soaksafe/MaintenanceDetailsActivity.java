@@ -14,15 +14,11 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-import com.google.android.material.datepicker.MaterialDatePicker;
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.snackbar.Snackbar;
 import com.wgu.d424.soaksafe.data.MaintenanceChecklist;
 import com.wgu.d424.soaksafe.data.MaintenanceRepository;
-import com.wgu.d424.soaksafe.summary.BriefMaintenanceSummary;
-import com.wgu.d424.soaksafe.summary.MaintenanceSummaryStrategy;
-import com.wgu.d424.soaksafe.summary.VerboseMaintenanceSummary;
 import com.wgu.d424.soaksafe.databinding.ActivityMaintenanceDetailsBinding;
+import com.wgu.d424.soaksafe.databinding.ItemMaintenanceChipRowBinding;
 import com.wgu.d424.soaksafe.util.AppBarInsetsHelper;
 
 import java.text.SimpleDateFormat;
@@ -34,13 +30,28 @@ public class MaintenanceDetailsActivity extends AppCompatActivity {
     public static final String EXTRA_USERNAME = "extra_username";
     public static final String EXTRA_USER_ID = "extra_user_id";
 
-    private static final String DATE_PICKER_TAG = "maintenance_date_picker";
+    private static final int[] TASK_LABELS = {
+            R.string.task_vacuum,
+            R.string.task_clean_skimmer,
+            R.string.task_add_water,
+            R.string.task_brush_walls
+    };
+
+    private static final int[] CHEM_LABELS = {
+            R.string.chemical_chlorine,
+            R.string.chemical_ph_up,
+            R.string.chemical_ph_down,
+            R.string.chemical_no_phos
+    };
 
     private ActivityMaintenanceDetailsBinding binding;
     private MaintenanceRepository maintenanceRepository;
     private long userId = -1L;
     @Nullable
     private Long savedDateMillisUtc;
+
+    private final ItemMaintenanceChipRowBinding[] taskChipBindings = new ItemMaintenanceChipRowBinding[4];
+    private final ItemMaintenanceChipRowBinding[] chemChipBindings = new ItemMaintenanceChipRowBinding[4];
 
     private final SimpleDateFormat displayDateFormat =
             new SimpleDateFormat("MM/dd/yyyy", Locale.US);
@@ -64,75 +75,93 @@ public class MaintenanceDetailsActivity extends AppCompatActivity {
                         .show()
         );
 
+        long todayMillis = System.currentTimeMillis();
+        savedDateMillisUtc = todayMillis;
+        binding.textMaintenanceDateValue.setText(formatDisplayDate(todayMillis));
+
         userId = getIntent().getLongExtra(EXTRA_USER_ID, -1L);
         maintenanceRepository = ((SoakSafeApplication) getApplication()).getMaintenanceRepository();
 
-        binding.textMaintenanceDateValue.setOnClickListener(v -> {
-            if (userId > 0L) {
-                showDatePicker();
-            }
-        });
+        binding.textMaintenanceDateValue.setClickable(false);
+        binding.textMaintenanceDateValue.setFocusable(false);
 
-        binding.buttonSaveChemicals.setOnClickListener(v -> {
+        inflateMaintenanceChips();
+
+        binding.buttonSaveMaintenance.setOnClickListener(v -> {
             if (userId <= 0L) {
                 return;
             }
-            saveChemicalsFromFields();
+            saveMaintenanceFromChips();
         });
 
         if (userId <= 0L) {
-            binding.textMaintenanceDateValue.setText(R.string.maintenance_date_none);
-            setChecklistEnabled(false);
+            setChipsEnabled(false);
             return;
         }
 
-        wireTaskCheckboxes();
-
-        maintenanceRepository.getSavedDateMillis(userId, millis -> {
-            savedDateMillisUtc = millis;
-            binding.textMaintenanceDateValue.setText(formatDisplayDate(millis));
+        maintenanceRepository.saveDateMillis(userId, todayMillis, () -> {
+            savedDateMillisUtc = todayMillis;
+            binding.textMaintenanceDateValue.setText(formatDisplayDate(todayMillis));
         });
 
         reloadChecklist();
     }
 
-    private void wireTaskCheckboxes() {
-        binding.checkboxVacuum.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            if (userId <= 0L) {
-                return;
+    private void inflateMaintenanceChips() {
+        for (int i = 0; i < TASK_LABELS.length; i++) {
+            ItemMaintenanceChipRowBinding chip = ItemMaintenanceChipRowBinding.inflate(
+                    getLayoutInflater(),
+                    binding.containerMaintenanceChips,
+                    true
+            );
+            chip.textChipLabel.setText(TASK_LABELS[i]);
+            chip.editChipAmount.setVisibility(android.view.View.GONE);
+            String label = getString(TASK_LABELS[i]);
+            chip.checkboxChip.setContentDescription(label);
+            taskChipBindings[i] = chip;
+        }
+        for (int i = 0; i < CHEM_LABELS.length; i++) {
+            ItemMaintenanceChipRowBinding chip = ItemMaintenanceChipRowBinding.inflate(
+                    getLayoutInflater(),
+                    binding.containerMaintenanceChips,
+                    true
+            );
+            chip.textChipLabel.setText(CHEM_LABELS[i]);
+            chip.editChipAmount.setVisibility(android.view.View.VISIBLE);
+            chip.editChipAmount.setEnabled(false);
+            chip.editChipAmount.setAlpha(0.55f);
+            String label = getString(CHEM_LABELS[i]);
+            chip.checkboxChip.setContentDescription(label);
+            wireChemicalChip(chip);
+            chemChipBindings[i] = chip;
+        }
+    }
+
+    private void wireChemicalChip(@NonNull ItemMaintenanceChipRowBinding chip) {
+        chip.checkboxChip.setOnCheckedChangeListener((v, checked) -> {
+            chip.editChipAmount.setEnabled(checked);
+            chip.editChipAmount.setAlpha(checked ? 1f : 0.55f);
+            if (!checked) {
+                chip.editChipAmount.setText("");
             }
-            maintenanceRepository.setVacuum(userId, isChecked, () -> { });
-        });
-        binding.checkboxCleanSkimmer.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            if (userId <= 0L) {
-                return;
-            }
-            maintenanceRepository.setCleanSkimmer(userId, isChecked, () -> { });
-        });
-        binding.checkboxAddWater.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            if (userId <= 0L) {
-                return;
-            }
-            maintenanceRepository.setAddWater(userId, isChecked, () -> { });
-        });
-        binding.checkboxBrushWalls.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            if (userId <= 0L) {
-                return;
-            }
-            maintenanceRepository.setBrushWalls(userId, isChecked, () -> { });
         });
     }
 
-    private void setChecklistEnabled(boolean enabled) {
-        binding.checkboxVacuum.setEnabled(enabled);
-        binding.checkboxCleanSkimmer.setEnabled(enabled);
-        binding.checkboxAddWater.setEnabled(enabled);
-        binding.checkboxBrushWalls.setEnabled(enabled);
-        binding.editChlorine.setEnabled(enabled);
-        binding.editPhUp.setEnabled(enabled);
-        binding.editPhDown.setEnabled(enabled);
-        binding.editNoPhos.setEnabled(enabled);
-        binding.buttonSaveChemicals.setEnabled(enabled);
+    private void setChipsEnabled(boolean enabled) {
+        for (ItemMaintenanceChipRowBinding chip : taskChipBindings) {
+            if (chip != null) {
+                chip.checkboxChip.setEnabled(enabled);
+            }
+        }
+        for (ItemMaintenanceChipRowBinding chip : chemChipBindings) {
+            if (chip != null) {
+                chip.checkboxChip.setEnabled(enabled);
+                boolean on = chip.checkboxChip.isChecked();
+                chip.editChipAmount.setEnabled(enabled && on);
+                chip.editChipAmount.setAlpha((enabled && on) ? 1f : 0.55f);
+            }
+        }
+        binding.buttonSaveMaintenance.setEnabled(enabled);
     }
 
     private void reloadChecklist() {
@@ -143,22 +172,43 @@ public class MaintenanceDetailsActivity extends AppCompatActivity {
     }
 
     private void applyChecklistToUi(@NonNull MaintenanceChecklist row) {
-        binding.checkboxVacuum.setOnCheckedChangeListener(null);
-        binding.checkboxCleanSkimmer.setOnCheckedChangeListener(null);
-        binding.checkboxAddWater.setOnCheckedChangeListener(null);
-        binding.checkboxBrushWalls.setOnCheckedChangeListener(null);
+        ItemMaintenanceChipRowBinding v = taskChipBindings[0];
+        ItemMaintenanceChipRowBinding s = taskChipBindings[1];
+        ItemMaintenanceChipRowBinding w = taskChipBindings[2];
+        ItemMaintenanceChipRowBinding b = taskChipBindings[3];
+        if (v != null) {
+            v.checkboxChip.setChecked(row.isVacuum());
+        }
+        if (s != null) {
+            s.checkboxChip.setChecked(row.isCleanSkimmer());
+        }
+        if (w != null) {
+            w.checkboxChip.setChecked(row.isAddWater());
+        }
+        if (b != null) {
+            b.checkboxChip.setChecked(row.isBrushWalls());
+        }
 
-        binding.checkboxVacuum.setChecked(row.isVacuum());
-        binding.checkboxCleanSkimmer.setChecked(row.isCleanSkimmer());
-        binding.checkboxAddWater.setChecked(row.isAddWater());
-        binding.checkboxBrushWalls.setChecked(row.isBrushWalls());
+        applyChemicalChipFromValue(chemChipBindings[0], row.getChlorine());
+        applyChemicalChipFromValue(chemChipBindings[1], row.getPhUp());
+        applyChemicalChipFromValue(chemChipBindings[2], row.getPhDown());
+        applyChemicalChipFromValue(chemChipBindings[3], row.getNoPhos());
+    }
 
-        binding.editChlorine.setText(floatFieldToText(row.getChlorine()));
-        binding.editPhUp.setText(floatFieldToText(row.getPhUp()));
-        binding.editPhDown.setText(floatFieldToText(row.getPhDown()));
-        binding.editNoPhos.setText(floatFieldToText(row.getNoPhos()));
-
-        wireTaskCheckboxes();
+    private void applyChemicalChipFromValue(
+            @Nullable ItemMaintenanceChipRowBinding chip,
+            float storedValue
+    ) {
+        if (chip == null) {
+            return;
+        }
+        chip.checkboxChip.setOnCheckedChangeListener(null);
+        boolean on = storedValue > 0f;
+        chip.checkboxChip.setChecked(on);
+        chip.editChipAmount.setEnabled(on);
+        chip.editChipAmount.setAlpha(on ? 1f : 0.55f);
+        chip.editChipAmount.setText(on ? floatFieldToText(storedValue) : "");
+        wireChemicalChip(chip);
     }
 
     @NonNull
@@ -172,18 +222,47 @@ public class MaintenanceDetailsActivity extends AppCompatActivity {
         return String.format(Locale.US, "%s", value);
     }
 
-    private void saveChemicalsFromFields() {
-        Float ch = parseChemical(binding.editChlorine.getText());
-        Float up = parseChemical(binding.editPhUp.getText());
-        Float down = parseChemical(binding.editPhDown.getText());
-        Float np = parseChemical(binding.editNoPhos.getText());
+    private void saveMaintenanceFromChips() {
+        boolean vacuum = taskChipBindings[0] != null && taskChipBindings[0].checkboxChip.isChecked();
+        boolean skimmer = taskChipBindings[1] != null && taskChipBindings[1].checkboxChip.isChecked();
+        boolean water = taskChipBindings[2] != null && taskChipBindings[2].checkboxChip.isChecked();
+        boolean brush = taskChipBindings[3] != null && taskChipBindings[3].checkboxChip.isChecked();
+
+        Float ch = readChemAmount(chemChipBindings[0]);
+        Float up = readChemAmount(chemChipBindings[1]);
+        Float down = readChemAmount(chemChipBindings[2]);
+        Float np = readChemAmount(chemChipBindings[3]);
         if (ch == null || up == null || down == null || np == null) {
             Snackbar.make(binding.getRoot(), R.string.error_chemical_number, Snackbar.LENGTH_LONG).show();
             return;
         }
-        maintenanceRepository.saveChemicals(userId, ch, up, down, np, () ->
-                Snackbar.make(binding.getRoot(), R.string.chemicals_saved, Snackbar.LENGTH_SHORT).show()
+
+        maintenanceRepository.saveFullChecklist(
+                userId,
+                vacuum,
+                skimmer,
+                water,
+                brush,
+                ch,
+                up,
+                down,
+                np,
+                () -> Snackbar.make(binding.getRoot(), R.string.maintenance_saved, Snackbar.LENGTH_SHORT).show()
         );
+    }
+
+    /**
+     * @return null if checkbox on but amount invalid; 0f if checkbox off
+     */
+    @Nullable
+    private Float readChemAmount(@Nullable ItemMaintenanceChipRowBinding chip) {
+        if (chip == null) {
+            return 0f;
+        }
+        if (!chip.checkboxChip.isChecked()) {
+            return 0f;
+        }
+        return parseChemical(chip.editChipAmount.getText());
     }
 
     @Nullable
@@ -244,38 +323,9 @@ public class MaintenanceDetailsActivity extends AppCompatActivity {
     @NonNull
     private CharSequence formatDisplayDate(@Nullable Long millisUtc) {
         if (millisUtc == null) {
-            return getString(R.string.maintenance_date_none);
+            return displayDateFormat.format(new Date(System.currentTimeMillis()));
         }
         return displayDateFormat.format(new Date(millisUtc));
-    }
-
-    private void showDatePicker() {
-        if (userId <= 0L) {
-            return;
-        }
-        Long initial = savedDateMillisUtc != null
-                ? savedDateMillisUtc
-                : MaterialDatePicker.todayInUtcMilliseconds();
-
-        MaterialDatePicker<Long> picker = MaterialDatePicker.Builder.datePicker()
-                .setTitleText(R.string.maintenance_date_picker_title)
-                .setSelection(initial)
-                .build();
-        picker.addOnPositiveButtonClickListener(selection -> {
-            if (selection == null) {
-                return;
-            }
-            maintenanceRepository.saveDateMillis(userId, selection, () -> {
-                savedDateMillisUtc = selection;
-                binding.textMaintenanceDateValue.setText(formatDisplayDate(selection));
-                Snackbar.make(
-                        binding.getRoot(),
-                        R.string.maintenance_date_saved,
-                        Snackbar.LENGTH_SHORT
-                ).show();
-            });
-        });
-        picker.show(getSupportFragmentManager(), DATE_PICKER_TAG);
     }
 
     private void setupBottomBarAndInsets() {
@@ -304,62 +354,21 @@ public class MaintenanceDetailsActivity extends AppCompatActivity {
         ViewCompat.requestApplyInsets(binding.getRoot());
 
         binding.buttonBottomSearch.setOnClickListener(v ->
-                showChecklistSummarySnackbar(new BriefMaintenanceSummary())
+                Snackbar.make(binding.getRoot(), R.string.bottom_bar_search, Snackbar.LENGTH_SHORT)
+                        .setAnchorView(binding.bottomActionBar)
+                        .show()
         );
-        binding.buttonBottomShare.setOnClickListener(v -> shareChecklistBrief());
-        binding.buttonBottomDocument.setOnClickListener(v ->
-                showMaintenanceSummaryDialog(new VerboseMaintenanceSummary())
-        );
-    }
-
-    /**
-     * Polymorphism: any {@link MaintenanceSummaryStrategy} can be passed; the UI does not depend
-     * on concrete {@link BriefMaintenanceSummary} vs {@link VerboseMaintenanceSummary}.
-     */
-    private void showChecklistSummarySnackbar(@NonNull MaintenanceSummaryStrategy strategy) {
-        if (userId <= 0L) {
-            return;
-        }
-        maintenanceRepository.loadChecklist(userId, checklist -> {
-            String text = strategy.summarize(checklist);
-            Snackbar.make(binding.getRoot(), text, Snackbar.LENGTH_LONG)
-                    .setAnchorView(binding.bottomActionBar)
-                    .show();
-        });
-    }
-
-    private void showMaintenanceSummaryDialog(@NonNull MaintenanceSummaryStrategy strategy) {
-        if (userId <= 0L) {
-            return;
-        }
-        maintenanceRepository.loadChecklist(userId, checklist -> {
-            String message = strategy.summarize(checklist);
-            new MaterialAlertDialogBuilder(this)
-                    .setTitle(R.string.maintenance_summary_dialog_title)
-                    .setMessage(message)
-                    .setPositiveButton(android.R.string.ok, null)
-                    .show();
-        });
-    }
-
-    private void shareChecklistBrief() {
-        if (userId <= 0L) {
-            return;
-        }
-        MaintenanceSummaryStrategy strategy = new BriefMaintenanceSummary();
-        maintenanceRepository.loadChecklist(userId, checklist -> {
-            String text = strategy.summarize(checklist);
+        binding.buttonBottomShare.setOnClickListener(v -> {
             Intent send = new Intent(Intent.ACTION_SEND);
             send.setType("text/plain");
-            send.putExtra(Intent.EXTRA_TEXT, text);
+            send.putExtra(Intent.EXTRA_TEXT, getString(R.string.share_checklist_chooser_title));
             Intent chooser = Intent.createChooser(send, getString(R.string.share_checklist_chooser_title));
-            if (send.resolveActivity(getPackageManager()) != null) {
-                startActivity(chooser);
-            } else {
-                Snackbar.make(binding.getRoot(), text, Snackbar.LENGTH_LONG)
-                        .setAnchorView(binding.bottomActionBar)
-                        .show();
-            }
+            startActivity(chooser);
+        });
+        binding.buttonBottomDocument.setOnClickListener(v -> {
+            Intent report = new Intent(this, MaintenanceReportActivity.class);
+            report.putExtra(MaintenanceReportActivity.EXTRA_USER_ID, userId);
+            startActivity(report);
         });
     }
 }

@@ -10,6 +10,11 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.SoakSafe">
         <activity
+            android:name=".MaintenanceReportActivity"
+            android:exported="false"
+            android:theme="@style/Theme.SoakSafe.Maintenance"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
             android:name=".MaintenanceDetailsActivity"
             android:exported="false"
             android:theme="@style/Theme.SoakSafe.Maintenance"

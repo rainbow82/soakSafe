@@ -45,9 +45,6 @@
                 android:id="@+id/text_maintenance_date_value"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="?attr/selectableItemBackground"
-                android:clickable="true"
-                android:focusable="true"
                 android:paddingVertical="8dp"
                 android:textAppearance="?attr/textAppearanceBodyLarge"
                 android:textColor="@android:color/white"
@@ -57,156 +54,33 @@
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                app:cardBackgroundColor="@color/maint_surface"
-                app:cardCornerRadius="12dp"
-                app:cardElevation="0dp"
-                app:strokeColor="@color/maint_outline"
-                app:strokeWidth="1dp">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="16dp">
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="@string/section_tasks"
-                        android:textAppearance="@style/TextAppearance.SoakSafe.SectionLabel"
-                        android:textColor="@color/maint_text_primary" />
-
-                    <com.google.android.material.checkbox.MaterialCheckBox
-                        android:id="@+id/checkbox_vacuum"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:text="@string/task_vacuum"
-                        android:textColor="@color/maint_text_primary"
-                        app:buttonTint="@color/task_checkbox_tint" />
-
-                    <com.google.android.material.checkbox.MaterialCheckBox
-                        android:id="@+id/checkbox_clean_skimmer"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="@string/task_clean_skimmer"
-                        android:textColor="@color/maint_text_primary"
-                        app:buttonTint="@color/task_checkbox_tint" />
-
-                    <com.google.android.material.checkbox.MaterialCheckBox
-                        android:id="@+id/checkbox_add_water"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="@string/task_add_water"
-                        android:textColor="@color/maint_text_primary"
-                        app:buttonTint="@color/task_checkbox_tint" />
-
-                    <com.google.android.material.checkbox.MaterialCheckBox
-                        android:id="@+id/checkbox_brush_walls"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="@string/task_brush_walls"
-                        android:textColor="@color/maint_text_primary"
-                        app:buttonTint="@color/task_checkbox_tint" />
-                </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
-
-            <com.google.android.material.card.MaterialCardView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
                 app:cardBackgroundColor="@color/maint_surface"
-                app:cardCornerRadius="12dp"
+                app:cardCornerRadius="8dp"
                 app:cardElevation="0dp"
                 app:strokeColor="@color/maint_outline"
                 app:strokeWidth="1dp">
 
                 <LinearLayout
+                    android:id="@+id/container_maintenance_chips"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:divider="@drawable/bg_maintenance_chips_row_divider"
                     android:orientation="vertical"
-                    android:padding="16dp">
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="@string/section_chemicals"
-                        android:textAppearance="@style/TextAppearance.SoakSafe.SectionLabel"
-                        android:textColor="@color/maint_text_primary" />
-
-                    <com.google.android.material.textfield.TextInputLayout
-                        android:id="@+id/input_layout_chlorine"
-                        style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="12dp"
-                        android:hint="@string/chemical_chlorine">
-
-                        <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/edit_chlorine"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:inputType="numberDecimal|numberSigned"
-                            android:maxLines="1" />
-                    </com.google.android.material.textfield.TextInputLayout>
-
-                    <com.google.android.material.textfield.TextInputLayout
-                        android:id="@+id/input_layout_ph_up"
-                        style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:hint="@string/chemical_ph_up">
-
-                        <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/edit_ph_up"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:inputType="numberDecimal|numberSigned"
-                            android:maxLines="1" />
-                    </com.google.android.material.textfield.TextInputLayout>
-
-                    <com.google.android.material.textfield.TextInputLayout
-                        android:id="@+id/input_layout_ph_down"
-                        style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:hint="@string/chemical_ph_down">
-
-                        <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/edit_ph_down"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:inputType="numberDecimal|numberSigned"
-                            android:maxLines="1" />
-                    </com.google.android.material.textfield.TextInputLayout>
-
-                    <com.google.android.material.textfield.TextInputLayout
-                        android:id="@+id/input_layout_no_phos"
-                        style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:hint="@string/chemical_no_phos">
-
-                        <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/edit_no_phos"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:inputType="numberDecimal|numberSigned"
-                            android:maxLines="1" />
-                    </com.google.android.material.textfield.TextInputLayout>
-
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/button_save_chemicals"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="16dp"
-                        android:text="@string/save_chemicals" />
-                </LinearLayout>
+                    android:showDividers="middle" />
             </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/button_save_maintenance"
+                style="@style/Widget.Material3.Button.UnelevatedButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="12dp"
+                android:text="@string/save_maintenance"
+                android:textColor="@color/maint_save_button_text"
+                app:backgroundTint="@color/maint_save_button"
+                app:rippleColor="#660A1628" />
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 

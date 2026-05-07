@@ -13,9 +13,9 @@
     <color name="task_row_title">#1B1B1F</color>
     <color name="task_row_subtitle">#5C5F66</color>
 
-    <!-- Maintenance Details: #41A4FB @ 60% opacity = #99 + RGB; cards #EEF4B5 -->
+    <!-- Maintenance Details: #41A4FB @ 60% opacity = #99 + RGB; cards #FDFFC6 -->
     <color name="maint_background">#9941A4FB</color>
-    <color name="maint_surface">#EEF4B5</color>
+    <color name="maint_surface">#FDFFC6</color>
     <color name="maint_text_primary">#111827</color>
     <color name="maint_text_secondary">#6B7280</color>
     <color name="maint_text_muted">#9CA3AF</color>
@@ -28,4 +28,23 @@
     <color name="maint_button_outline">#2563EB</color>
     <!-- Bottom action bar (muted lavender-grey) -->
     <color name="maint_bottom_bar_bg">#DCD4E8</color>
+    <color name="maint_save_button">#35FCB6</color>
+    <color name="maint_save_button_text">#0A1628</color>
+    <color name="maint_chips_row_divider">#66C4CC88</color>
+
+    <!-- Maintenance report cards -->
+    <color name="report_card_surface">#FDFFC6</color>
+    <color name="report_card_header">#FDFFC6</color>
+    <color name="report_card_divider">#59C4CC88</color>
+    <color name="report_row_divider">#33C4CC88</color>
+    <color name="report_value_chip_fill">#FFFFFF</color>
+    <color name="report_value_chip_stroke">#78716C</color>
+    <color name="report_text_dark">#030712</color>
+    <color name="report_text_secondary_dark">#1E293B</color>
+    <color name="report_label_chip_fill">#FFFFFF</color>
+    <color name="report_label_chip_stroke">#78716C</color>
+    <color name="report_subtitle_chip_fill">#F5F5F4</color>
+    <color name="report_subtitle_chip_stroke">#A8A29E</color>
+    <color name="report_check_green">#15803D</color>
+    <color name="report_check_circle_fill">#BBF7D0</color>
 </resources>
