@@ -1,15 +1,11 @@
 package com.wgu.d424.soaksafe.data;
 
-import android.os.Handler;
-import android.os.Looper;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import com.wgu.d424.soaksafe.base.AsyncRepositoryBase;
 
-public class UserRepository {
+public class UserRepository extends AsyncRepositoryBase {
 
     public interface Callback<T> {
         void onResult(@Nullable T result);
@@ -36,8 +32,6 @@ public class UserRepository {
     }
 
     private final UserDao userDao;
-    private final ExecutorService executor = Executors.newSingleThreadExecutor();
-    private final Handler mainHandler = new Handler(Looper.getMainLooper());
 
     public UserRepository(@NonNull UserDao userDao) {
         this.userDao = userDao;
@@ -54,15 +48,15 @@ public class UserRepository {
             callback.onLogin(LoginResult.EMPTY_FIELDS, null);
             return;
         }
-        executor.execute(() -> {
+        runInBackground(() -> {
             User row = userDao.getByUsernameSync(u);
             LoginResult result;
             if (row == null || !row.getPassword().equals(p)) {
                 result = LoginResult.INVALID_CREDENTIALS;
-                mainHandler.post(() -> callback.onLogin(result, null));
+                runOnMainThread(() -> callback.onLogin(result, null));
             } else {
                 result = LoginResult.SUCCESS;
-                mainHandler.post(() -> callback.onLogin(result, row));
+                runOnMainThread(() -> callback.onLogin(result, row));
             }
         });
     }
@@ -80,7 +74,7 @@ public class UserRepository {
             callback.onRegister(RegisterResult.EMPTY_FIELDS);
             return;
         }
-        executor.execute(() -> {
+        runInBackground(() -> {
             RegisterResult result;
             if (userDao.countByUsername(u) > 0) {
                 result = RegisterResult.USERNAME_TAKEN;
@@ -92,7 +86,7 @@ public class UserRepository {
                 userDao.insert(user);
                 result = RegisterResult.SUCCESS;
             }
-            mainHandler.post(() -> callback.onRegister(result));
+            runOnMainThread(() -> callback.onRegister(result));
         });
     }
 }

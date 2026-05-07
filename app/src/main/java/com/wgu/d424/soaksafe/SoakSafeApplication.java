@@ -25,13 +25,14 @@ public class SoakSafeApplication extends Application {
         )
                 .addMigrations(
                         SoakSafeDatabaseMigrations.MIGRATION_1_2,
-                        SoakSafeDatabaseMigrations.MIGRATION_2_3
+                        SoakSafeDatabaseMigrations.MIGRATION_2_3,
+                        SoakSafeDatabaseMigrations.MIGRATION_3_4
                 )
                 .build();
         userRepository = new UserRepository(db.userDao());
         maintenanceRepository = new MaintenanceRepository(
                 db.maintenanceDetailDao(),
-                db.maintenanceTaskCompletionDao()
+                db.maintenanceChecklistDao()
         );
     }
 

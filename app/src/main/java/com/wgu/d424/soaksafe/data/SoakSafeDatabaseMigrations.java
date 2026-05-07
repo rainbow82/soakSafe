@@ -37,4 +37,26 @@ public final class SoakSafeDatabaseMigrations {
                     + "ON `maintenance_task_completions` (`userId`)");
         }
     };
+
+    public static final Migration MIGRATION_3_4 = new Migration(3, 4) {
+        @Override
+        public void migrate(@NonNull SupportSQLiteDatabase db) {
+            db.execSQL("DROP TABLE IF EXISTS `maintenance_task_completions`");
+            db.execSQL(
+                    "CREATE TABLE IF NOT EXISTS `maintenance_checklist` ("
+                            + "`userId` INTEGER NOT NULL, "
+                            + "`vacuum` INTEGER NOT NULL, "
+                            + "`clean_skimmer` INTEGER NOT NULL, "
+                            + "`add_water` INTEGER NOT NULL, "
+                            + "`brush_walls` INTEGER NOT NULL, "
+                            + "`chlorine` REAL NOT NULL, "
+                            + "`ph_up` REAL NOT NULL, "
+                            + "`ph_down` REAL NOT NULL, "
+                            + "`no_phos` REAL NOT NULL, "
+                            + "PRIMARY KEY(`userId`), "
+                            + "FOREIGN KEY(`userId`) REFERENCES `users`(`id`) "
+                            + "ON UPDATE NO ACTION ON DELETE CASCADE)"
+            );
+        }
+    };
 }

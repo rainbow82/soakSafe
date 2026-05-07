@@ -1,137 +1,139 @@
 package com.wgu.d424.soaksafe.data;
 
-import android.os.Handler;
-import android.os.Looper;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.wgu.d424.soaksafe.util.TimeUtil;
+import com.wgu.d424.soaksafe.base.AsyncRepositoryBase;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
-public class MaintenanceRepository {
+public class MaintenanceRepository extends AsyncRepositoryBase {
 
     public interface DateCallback {
         void onDate(@Nullable Long dateMillisUtc);
     }
 
-    public interface TaskRowsCallback {
-        void onRows(@NonNull List<TaskRowState> rows, int completedTodayCount, int totalTasks);
-    }
-
-    public static final class TaskRowState {
-        public final String taskKey;
-        public final boolean completedToday;
-        @Nullable
-        public final Long lastCompletedAtMillis;
-
-        public TaskRowState(
-                @NonNull String taskKey,
-                boolean completedToday,
-                @Nullable Long lastCompletedAtMillis
-        ) {
-            this.taskKey = taskKey;
-            this.completedToday = completedToday;
-            this.lastCompletedAtMillis = lastCompletedAtMillis;
-        }
+    public interface ChecklistCallback {
+        void onChecklist(@NonNull MaintenanceChecklist row);
     }
 
     private final MaintenanceDetailDao maintenanceDetailDao;
-    private final MaintenanceTaskCompletionDao taskCompletionDao;
-    private final ExecutorService executor = Executors.newSingleThreadExecutor();
-    private final Handler mainHandler = new Handler(Looper.getMainLooper());
+    private final MaintenanceChecklistDao checklistDao;
 
     public MaintenanceRepository(
             @NonNull MaintenanceDetailDao maintenanceDetailDao,
-            @NonNull MaintenanceTaskCompletionDao taskCompletionDao
+            @NonNull MaintenanceChecklistDao checklistDao
     ) {
         this.maintenanceDetailDao = maintenanceDetailDao;
-        this.taskCompletionDao = taskCompletionDao;
+        this.checklistDao = checklistDao;
     }
 
     public void getSavedDateMillis(long userId, @NonNull DateCallback callback) {
-        executor.execute(() -> {
+        runInBackground(() -> {
             MaintenanceDetail row = maintenanceDetailDao.getByUserIdSync(userId);
             Long value = row != null ? row.getDateMillis() : null;
-            mainHandler.post(() -> callback.onDate(value));
+            runOnMainThread(() -> callback.onDate(value));
         });
     }
 
     public void saveDateMillis(long userId, long dateMillisUtc, @NonNull Runnable onSaved) {
-        executor.execute(() -> {
+        runInBackground(() -> {
             MaintenanceDetail detail = new MaintenanceDetail();
             detail.setUserId(userId);
             detail.setDateMillis(dateMillisUtc);
             maintenanceDetailDao.upsert(detail);
-            mainHandler.post(onSaved);
-        });
-    }
-
-    public void loadTaskRows(long userId, @NonNull TaskRowsCallback callback) {
-        executor.execute(() -> {
-            long todayStart = TimeUtil.startOfLocalDayMillis(System.currentTimeMillis());
-            List<TaskRowState> rows = new ArrayList<>();
-            int doneToday = 0;
-            for (MaintenanceTasksCatalog.Entry entry : MaintenanceTasksCatalog.ENTRIES) {
-                MaintenanceTaskCompletion onDay = taskCompletionDao.getForTaskOnDay(
-                        userId,
-                        entry.key,
-                        todayStart
-                );
-                boolean today = onDay != null;
-                if (today) {
-                    doneToday++;
-                }
-                MaintenanceTaskCompletion latest = taskCompletionDao.getLatestForTask(userId, entry.key);
-                Long lastAt = latest != null ? latest.getCompletedAtMillis() : null;
-                rows.add(new TaskRowState(entry.key, today, lastAt));
-            }
-            int total = MaintenanceTasksCatalog.ENTRIES.size();
-            int finalDone = doneToday;
-            mainHandler.post(() -> callback.onRows(rows, finalDone, total));
-        });
-    }
-
-    public void setTaskCompletedToday(
-            long userId,
-            @NonNull String taskKey,
-            boolean completed,
-            @NonNull Runnable onDone
-    ) {
-        executor.execute(() -> {
-            long todayStart = TimeUtil.startOfLocalDayMillis(System.currentTimeMillis());
-            if (completed) {
-                MaintenanceTaskCompletion row = new MaintenanceTaskCompletion();
-                row.setUserId(userId);
-                row.setTaskKey(taskKey);
-                row.setCompletedDayMillis(todayStart);
-                row.setCompletedAtMillis(System.currentTimeMillis());
-                taskCompletionDao.insert(row);
-            } else {
-                taskCompletionDao.deleteForTaskOnDay(userId, taskKey, todayStart);
-            }
-            mainHandler.post(onDone);
+            runOnMainThread(onSaved);
         });
     }
 
     /**
-     * Removes the most recent completion row for this task (any day), for the trash control.
+     * Returns the stored row or defaults (all tasks false, all chemicals 0) if none exists yet.
      */
-    public void deleteLatestTaskCompletion(
+    public void loadChecklist(long userId, @NonNull ChecklistCallback callback) {
+        runInBackground(() -> {
+            MaintenanceChecklist row = checklistDao.getByUserIdSync(userId);
+            if (row == null) {
+                row = defaultChecklist(userId);
+            }
+            MaintenanceChecklist finalRow = row;
+            runOnMainThread(() -> callback.onChecklist(finalRow));
+        });
+    }
+
+    @NonNull
+    private MaintenanceChecklist defaultChecklist(long userId) {
+        MaintenanceChecklist c = new MaintenanceChecklist();
+        c.setUserId(userId);
+        c.setVacuum(false);
+        c.setCleanSkimmer(false);
+        c.setAddWater(false);
+        c.setBrushWalls(false);
+        c.setChlorine(0f);
+        c.setPhUp(0f);
+        c.setPhDown(0f);
+        c.setNoPhos(0f);
+        return c;
+    }
+
+    public void setVacuum(long userId, boolean value, @NonNull Runnable onDone) {
+        runInBackground(() -> {
+            MaintenanceChecklist row = getOrCreateRow(userId);
+            row.setVacuum(value);
+            checklistDao.upsert(row);
+            runOnMainThread(onDone);
+        });
+    }
+
+    public void setCleanSkimmer(long userId, boolean value, @NonNull Runnable onDone) {
+        runInBackground(() -> {
+            MaintenanceChecklist row = getOrCreateRow(userId);
+            row.setCleanSkimmer(value);
+            checklistDao.upsert(row);
+            runOnMainThread(onDone);
+        });
+    }
+
+    public void setAddWater(long userId, boolean value, @NonNull Runnable onDone) {
+        runInBackground(() -> {
+            MaintenanceChecklist row = getOrCreateRow(userId);
+            row.setAddWater(value);
+            checklistDao.upsert(row);
+            runOnMainThread(onDone);
+        });
+    }
+
+    public void setBrushWalls(long userId, boolean value, @NonNull Runnable onDone) {
+        runInBackground(() -> {
+            MaintenanceChecklist row = getOrCreateRow(userId);
+            row.setBrushWalls(value);
+            checklistDao.upsert(row);
+            runOnMainThread(onDone);
+        });
+    }
+
+    public void saveChemicals(
             long userId,
-            @NonNull String taskKey,
+            float chlorine,
+            float phUp,
+            float phDown,
+            float noPhos,
             @NonNull Runnable onDone
     ) {
-        executor.execute(() -> {
-            MaintenanceTaskCompletion latest = taskCompletionDao.getLatestForTask(userId, taskKey);
-            if (latest != null) {
-                taskCompletionDao.delete(latest);
-            }
-            mainHandler.post(onDone);
+        runInBackground(() -> {
+            MaintenanceChecklist row = getOrCreateRow(userId);
+            row.setChlorine(chlorine);
+            row.setPhUp(phUp);
+            row.setPhDown(phDown);
+            row.setNoPhos(noPhos);
+            checklistDao.upsert(row);
+            runOnMainThread(onDone);
         });
+    }
+
+    @NonNull
+    private MaintenanceChecklist getOrCreateRow(long userId) {
+        MaintenanceChecklist row = checklistDao.getByUserIdSync(userId);
+        if (row == null) {
+            row = defaultChecklist(userId);
+        }
+        return row;
     }
 }
