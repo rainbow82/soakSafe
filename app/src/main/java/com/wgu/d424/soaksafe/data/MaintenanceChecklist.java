@@ -1,5 +1,6 @@
 package com.wgu.d424.soaksafe.data;
 
+import androidx.annotation.Nullable;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.ForeignKey;
@@ -43,6 +44,10 @@ public class MaintenanceChecklist {
 
     @ColumnInfo(name = "no_phos")
     private float noPhos;
+
+    @ColumnInfo(name = "custom_lines_json")
+    @Nullable
+    private String customLinesJson;
 
     public long getUserId() {
         return userId;
@@ -114,5 +119,14 @@ public class MaintenanceChecklist {
 
     public void setNoPhos(float noPhos) {
         this.noPhos = noPhos;
+    }
+
+    @Nullable
+    public String getCustomLinesJson() {
+        return customLinesJson;
+    }
+
+    public void setCustomLinesJson(@Nullable String customLinesJson) {
+        this.customLinesJson = customLinesJson;
     }
 }

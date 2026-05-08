@@ -1,10 +1,13 @@
 package com.wgu.d424.soaksafe.data;
 
+import android.content.Context;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.wgu.d424.soaksafe.base.AsyncRepositoryBase;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class MaintenanceRepository extends AsyncRepositoryBase {
@@ -24,15 +27,18 @@ public class MaintenanceRepository extends AsyncRepositoryBase {
     private final MaintenanceDetailDao maintenanceDetailDao;
     private final MaintenanceChecklistDao checklistDao;
     private final MaintenanceEventDao eventDao;
+    private final Context appContext;
 
     public MaintenanceRepository(
             @NonNull MaintenanceDetailDao maintenanceDetailDao,
             @NonNull MaintenanceChecklistDao checklistDao,
-            @NonNull MaintenanceEventDao eventDao
+            @NonNull MaintenanceEventDao eventDao,
+            @NonNull Context context
     ) {
         this.maintenanceDetailDao = maintenanceDetailDao;
         this.checklistDao = checklistDao;
         this.eventDao = eventDao;
+        this.appContext = context.getApplicationContext();
     }
 
     public void getSavedDateMillis(long userId, @NonNull DateCallback callback) {
@@ -71,6 +77,38 @@ public class MaintenanceRepository extends AsyncRepositoryBase {
         runInBackground(() -> {
             List<MaintenanceEvent> rows = eventDao.listByUserIdSync(userId);
             runOnMainThread(() -> callback.onEvents(rows));
+        });
+    }
+
+    public interface SingleEventCallback {
+        void onEvent(@NonNull MaintenanceEvent event);
+
+        void onMissing();
+    }
+
+    public void loadEventForUser(long eventId, long userId, @NonNull SingleEventCallback callback) {
+        runInBackground(() -> {
+            MaintenanceEvent row = eventDao.getByIdSync(eventId);
+            if (row == null || row.getUserId() != userId) {
+                runOnMainThread(callback::onMissing);
+            } else {
+                MaintenanceEvent result = row;
+                runOnMainThread(() -> callback.onEvent(result));
+            }
+        });
+    }
+
+    public void updateEvent(@NonNull MaintenanceEvent event, @NonNull Runnable onDone) {
+        runInBackground(() -> {
+            eventDao.update(event);
+            runOnMainThread(onDone);
+        });
+    }
+
+    public void deleteEvent(long eventId, long userId, @NonNull Runnable onDone) {
+        runInBackground(() -> {
+            eventDao.deleteByIdForUser(eventId, userId);
+            runOnMainThread(onDone);
         });
     }
 
@@ -147,6 +185,7 @@ public class MaintenanceRepository extends AsyncRepositoryBase {
             float phUp,
             float phDown,
             float noPhos,
+            @Nullable String customLinesJson,
             @NonNull Runnable onDone
     ) {
         runInBackground(() -> {
@@ -159,6 +198,7 @@ public class MaintenanceRepository extends AsyncRepositoryBase {
             row.setPhUp(phUp);
             row.setPhDown(phDown);
             row.setNoPhos(noPhos);
+            row.setCustomLinesJson(customLinesJson);
             checklistDao.upsert(row);
             appendEvent(userId, "CHECKLIST_SAVED", System.currentTimeMillis(), row);
             runOnMainThread(onDone);
@@ -208,6 +248,24 @@ public class MaintenanceRepository extends AsyncRepositoryBase {
         event.setPhUp(row.getPhUp());
         event.setPhDown(row.getPhDown());
         event.setNoPhos(row.getNoPhos());
+
+        MaintenanceEvent forCodec = new MaintenanceEvent();
+        forCodec.setVacuum(row.isVacuum());
+        forCodec.setCleanSkimmer(row.isCleanSkimmer());
+        forCodec.setAddWater(row.isAddWater());
+        forCodec.setBrushWalls(row.isBrushWalls());
+        forCodec.setChlorine(row.getChlorine());
+        forCodec.setPhUp(row.getPhUp());
+        forCodec.setPhDown(row.getPhDown());
+        forCodec.setNoPhos(row.getNoPhos());
+        List<EventLineItem> merged = new ArrayList<>(
+                EventLineItemsCodec.fromLegacyEvent(forCodec, appContext));
+        merged.addAll(MaintenanceCustomLinesCodec.selectedAsEventLineItems(row.getCustomLinesJson()));
+        if (merged.isEmpty()) {
+            event.setLineItemsJson(null);
+        } else {
+            event.setLineItemsJson(EventLineItemsCodec.encode(merged));
+        }
         eventDao.insert(event);
     }
 }

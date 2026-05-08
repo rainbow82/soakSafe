@@ -10,6 +10,11 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.SoakSafe">
         <activity
+            android:name=".EditMaintenanceReportActivity"
+            android:exported="false"
+            android:theme="@style/Theme.SoakSafe.Maintenance"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
             android:name=".MaintenanceReportActivity"
             android:exported="false"
             android:theme="@style/Theme.SoakSafe.Maintenance"
@@ -22,12 +27,12 @@
         <activity
             android:name=".CreateAccountActivity"
             android:exported="false"
-            android:theme="@style/Theme.SoakSafe"
+            android:theme="@style/Theme.SoakSafe.CreateAccount"
             android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".HomeActivity"
             android:exported="true"
-            android:theme="@style/Theme.SoakSafe"
+            android:theme="@style/Theme.SoakSafe.Home"
             android:windowSoftInputMode="adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

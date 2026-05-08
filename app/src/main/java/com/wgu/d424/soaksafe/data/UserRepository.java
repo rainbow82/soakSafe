@@ -65,6 +65,8 @@ public class UserRepository extends AsyncRepositoryBase {
             @NonNull String fullName,
             @NonNull String username,
             @NonNull String password,
+            int poolSizeGallons,
+            boolean poolSaltWater,
             @NonNull RegisterCallback callback
     ) {
         String name = fullName.trim();
@@ -83,6 +85,8 @@ public class UserRepository extends AsyncRepositoryBase {
                 user.setFullName(name);
                 user.setUsername(u);
                 user.setPassword(p);
+                user.setPoolSizeGallons(poolSizeGallons);
+                user.setPoolSaltWater(poolSaltWater);
                 userDao.insert(user);
                 result = RegisterResult.SUCCESS;
             }

@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="maintenance_bottom_bar_height">56dp</dimen>
-    <dimen name="maintenance_scroll_bottom_padding">72dp</dimen>
+    <dimen name="maintenance_scroll_bottom_padding">100dp</dimen>
+    <!-- Fallback before bottom_action_bar is measured (minHeight + vertical padding) -->
+    <dimen name="fab_fallback_bottom_bar_height">72dp</dimen>
 </resources>

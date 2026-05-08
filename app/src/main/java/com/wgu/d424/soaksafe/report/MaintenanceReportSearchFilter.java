@@ -7,17 +7,16 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.wgu.d424.soaksafe.R;
+import com.wgu.d424.soaksafe.data.EventLineItemsCodec;
 import com.wgu.d424.soaksafe.data.MaintenanceEvent;
 
 import java.util.Locale;
 
 /**
  * Filters maintenance events using the user's query. Keywords match the same signals shown on cards:
- * tasks that are done, chemicals with amount greater than 1, plus event type.
+ * tasks that are done, chemicals with amount greater than zero, plus event type.
  */
 public final class MaintenanceReportSearchFilter {
-
-    private static final float CHEMICAL_VISIBLE_THRESHOLD = 1f;
 
     private final Resources resources;
 
@@ -48,6 +47,7 @@ public final class MaintenanceReportSearchFilter {
     @NonNull
     private String buildHaystack(@NonNull MaintenanceEvent e) {
         StringBuilder sb = new StringBuilder();
+        EventLineItemsCodec.appendJsonHaystack(sb, e.getLineItemsJson());
         if (e.isVacuum()) {
             sb.append(resources.getString(R.string.task_vacuum)).append(' ');
         }
@@ -77,7 +77,7 @@ public final class MaintenanceReportSearchFilter {
             float amount,
             int labelRes
     ) {
-        if (amount <= CHEMICAL_VISIBLE_THRESHOLD) {
+        if (amount <= 0f) {
             return;
         }
         sb.append(resources.getString(labelRes)).append(' ');

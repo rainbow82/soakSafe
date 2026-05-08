@@ -2,6 +2,7 @@ package com.wgu.d424.soaksafe;
 
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -32,6 +33,8 @@ public class CreateAccountActivity extends AppCompatActivity {
 
         userRepository = ((SoakSafeApplication) getApplication()).getUserRepository();
 
+        binding.togglePoolType.check(R.id.button_pool_fresh);
+
         binding.buttonSaveAccount.setOnClickListener(v -> attemptCreateAccount());
     }
 
@@ -48,11 +51,32 @@ public class CreateAccountActivity extends AppCompatActivity {
         CharSequence name = binding.editFullName.getText();
         CharSequence user = binding.editUsername.getText();
         CharSequence pass = binding.editPassword.getText();
+        CharSequence size = binding.editPoolSize.getText();
         String fullName = name != null ? name.toString() : "";
         String username = user != null ? user.toString() : "";
         String password = pass != null ? pass.toString() : "";
+        String sizeStr = size != null ? size.toString().trim() : "";
 
-        userRepository.registerUser(fullName, username, password, result -> {
+        int poolSizeGallons;
+        try {
+            poolSizeGallons = Integer.parseInt(sizeStr);
+        } catch (NumberFormatException e) {
+            Snackbar.make(binding.getRoot(), R.string.error_pool_size_invalid, Snackbar.LENGTH_LONG).show();
+            return;
+        }
+        if (poolSizeGallons <= 0) {
+            Snackbar.make(binding.getRoot(), R.string.error_pool_size_invalid, Snackbar.LENGTH_LONG).show();
+            return;
+        }
+
+        int checkedType = binding.togglePoolType.getCheckedButtonId();
+        if (checkedType == View.NO_ID) {
+            Snackbar.make(binding.getRoot(), R.string.error_pool_size_invalid, Snackbar.LENGTH_LONG).show();
+            return;
+        }
+        boolean poolSaltWater = checkedType == R.id.button_pool_salt;
+
+        userRepository.registerUser(fullName, username, password, poolSizeGallons, poolSaltWater, result -> {
             switch (result) {
                 case SUCCESS:
                     setResult(RESULT_OK);

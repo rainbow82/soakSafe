@@ -1,8 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="app_screen_background">#0a1628</color>
+    <!-- Home: pool photo + readability scrim -->
+    <color name="home_background_scrim">#661A2B45</color>
+    <!-- Home form: light surface, text and outlines tuned for WCAG AA on white -->
+    <color name="home_form_surface">#FFFFFF</color>
+    <color name="home_form_on_surface">#12181C</color>
+    <color name="home_form_on_surface_variant">#3D454D</color>
+    <color name="home_input_outline">#5A6570</color>
+    <color name="home_primary">#006494</color>
+    <color name="home_status_bar">#0F2238</color>
+    <color name="home_nav_bar">#F2F4F7</color>
     <color name="pool_accent">#00a8e8</color>
     <color name="pool_accent_variant">#0077b6</color>
+    <!-- Create account / water screens (solid = theme colorBackground; gradient = windowBackground drawable) -->
+    <color name="create_account_color_background">#023E8A</color>
+    <color name="create_account_water_status">#023E8A</color>
+    <color name="create_account_water_nav">#0077B6</color>
+    <color name="create_account_on_water">#E8F7FC</color>
     <color name="ic_launcher_background">#0077b6</color>
     <color name="on_pool_accent">#001219</color>
     <color name="task_card_background">#F7F9FC</color>

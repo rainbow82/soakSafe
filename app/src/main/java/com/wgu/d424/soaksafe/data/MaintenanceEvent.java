@@ -1,6 +1,7 @@
 package com.wgu.d424.soaksafe.data;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.ForeignKey;
@@ -54,6 +55,10 @@ public class MaintenanceEvent {
     @ColumnInfo(name = "no_phos")
     private float noPhos;
 
+    @Nullable
+    @ColumnInfo(name = "line_items_json")
+    private String lineItemsJson;
+
     public long getId() { return id; }
     public void setId(long id) { this.id = id; }
     public long getUserId() { return userId; }
@@ -81,4 +86,7 @@ public class MaintenanceEvent {
     public void setPhDown(float phDown) { this.phDown = phDown; }
     public float getNoPhos() { return noPhos; }
     public void setNoPhos(float noPhos) { this.noPhos = noPhos; }
+    @Nullable
+    public String getLineItemsJson() { return lineItemsJson; }
+    public void setLineItemsJson(@Nullable String lineItemsJson) { this.lineItemsJson = lineItemsJson; }
 }

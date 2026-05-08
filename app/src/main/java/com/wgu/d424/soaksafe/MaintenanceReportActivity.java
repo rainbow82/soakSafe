@@ -1,5 +1,6 @@
 package com.wgu.d424.soaksafe;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -15,14 +16,12 @@ import com.wgu.d424.soaksafe.data.MaintenanceEvent;
 import com.wgu.d424.soaksafe.data.MaintenanceRepository;
 import com.wgu.d424.soaksafe.databinding.ActivityMaintenanceReportBinding;
 import com.wgu.d424.soaksafe.report.MaintenanceEventAdapter;
-import com.wgu.d424.soaksafe.report.MaintenanceEventUiModel;
 import com.wgu.d424.soaksafe.report.MaintenanceReportSearchFilter;
-import com.wgu.d424.soaksafe.report.ReportDetailLine;
+import com.wgu.d424.soaksafe.report.ReportEventRowsFactory;
 import com.wgu.d424.soaksafe.util.AppBarInsetsHelper;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -58,7 +57,12 @@ public class MaintenanceReportActivity extends AppCompatActivity {
         maintenanceRepository = ((SoakSafeApplication) getApplication()).getMaintenanceRepository();
         searchFilter = new MaintenanceReportSearchFilter(this);
 
-        adapter = new MaintenanceEventAdapter();
+        adapter = new MaintenanceEventAdapter(eventId -> {
+            Intent edit = new Intent(this, EditMaintenanceReportActivity.class);
+            edit.putExtra(EditMaintenanceReportActivity.EXTRA_EVENT_ID, eventId);
+            edit.putExtra(EditMaintenanceReportActivity.EXTRA_USER_ID, userId);
+            startActivity(edit);
+        });
         binding.recyclerReportEvents.setLayoutManager(new LinearLayoutManager(this));
         binding.recyclerReportEvents.setAdapter(adapter);
 
@@ -84,6 +88,18 @@ public class MaintenanceReportActivity extends AppCompatActivity {
             return;
         }
 
+        loadReportEvents();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (userId > 0L) {
+            loadReportEvents();
+        }
+    }
+
+    private void loadReportEvents() {
         maintenanceRepository.loadEvents(userId, rows -> {
             allEvents.clear();
             allEvents.addAll(rows);
@@ -112,7 +128,7 @@ public class MaintenanceReportActivity extends AppCompatActivity {
             }
         }
 
-        adapter.setRows(mapRows(filtered));
+        adapter.setRows(ReportEventRowsFactory.toUiModels(this, filtered, dateTimeFormat));
 
         if (allEvents.isEmpty()) {
             binding.textReportEmpty.setText(R.string.report_no_events);
@@ -123,62 +139,5 @@ public class MaintenanceReportActivity extends AppCompatActivity {
         } else {
             binding.textReportEmpty.setVisibility(View.GONE);
         }
-    }
-
-    @NonNull
-    private List<MaintenanceEventUiModel> mapRows(@NonNull List<MaintenanceEvent> rows) {
-        List<MaintenanceEventUiModel> mapped = new ArrayList<>();
-        for (MaintenanceEvent row : rows) {
-            String time = dateTimeFormat.format(new Date(row.getEventTimeMillis()));
-            mapped.add(new MaintenanceEventUiModel(time, buildDetailRows(row)));
-        }
-        return mapped;
-    }
-
-    @NonNull
-    private List<ReportDetailLine> buildDetailRows(@NonNull MaintenanceEvent row) {
-        List<ReportDetailLine> lines = new ArrayList<>();
-        if (row.isVacuum()) {
-            lines.add(ReportDetailLine.taskDone(getString(R.string.task_vacuum)));
-        }
-        if (row.isCleanSkimmer()) {
-            lines.add(ReportDetailLine.taskDone(getString(R.string.task_clean_skimmer)));
-        }
-        if (row.isAddWater()) {
-            lines.add(ReportDetailLine.taskDone(getString(R.string.task_add_water)));
-        }
-        if (row.isBrushWalls()) {
-            lines.add(ReportDetailLine.taskDone(getString(R.string.task_brush_walls)));
-        }
-        if (row.getChlorine() > 1f) {
-            lines.add(ReportDetailLine.chemical(
-                    getString(R.string.chemical_chlorine),
-                    formatChem(row.getChlorine())
-            ));
-        }
-        if (row.getPhUp() > 1f) {
-            lines.add(ReportDetailLine.chemical(
-                    getString(R.string.chemical_ph_up),
-                    formatChem(row.getPhUp())
-            ));
-        }
-        if (row.getPhDown() > 1f) {
-            lines.add(ReportDetailLine.chemical(
-                    getString(R.string.chemical_ph_down),
-                    formatChem(row.getPhDown())
-            ));
-        }
-        if (row.getNoPhos() > 1f) {
-            lines.add(ReportDetailLine.chemical(
-                    getString(R.string.chemical_no_phos),
-                    formatChem(row.getNoPhos())
-            ));
-        }
-        return lines;
-    }
-
-    @NonNull
-    private static String formatChem(float value) {
-        return String.format(Locale.US, "%.2f", value);
     }
 }

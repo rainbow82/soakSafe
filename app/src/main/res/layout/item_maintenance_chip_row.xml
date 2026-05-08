@@ -12,15 +12,6 @@
     android:paddingEnd="12dp"
     android:paddingBottom="12dp">
 
-    <com.google.android.material.checkbox.MaterialCheckBox
-        android:id="@+id/checkbox_chip"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="4dp"
-        android:minWidth="48dp"
-        android:minHeight="48dp"
-        app:buttonTint="@color/task_checkbox_tint" />
-
     <TextView
         android:id="@+id/text_chip_label"
         android:layout_width="0dp"
@@ -30,18 +21,15 @@
         android:textSize="15sp"
         tools:text="Vacuum" />
 
-    <com.google.android.material.textfield.TextInputEditText
-        android:id="@+id/edit_chip_amount"
-        android:layout_width="88dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="6dp"
-        android:gravity="end|center_vertical"
-        android:hint="@string/chemical_amount_hint"
-        android:importantForAutofill="no"
-        android:inputType="numberDecimal|numberSigned"
-        android:maxLines="1"
-        android:textColor="@color/maint_text_primary"
-        android:textSize="14sp"
-        android:visibility="gone"
-        tools:visibility="visible" />
+    <androidx.appcompat.widget.AppCompatImageButton
+        android:id="@+id/button_chip_toggle"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="8dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="@string/chip_add_item_content_description"
+        android:padding="10dp"
+        android:scaleType="fitCenter"
+        app:srcCompat="@drawable/ic_add_24"
+        app:tint="@color/maint_text_primary" />
 </LinearLayout>

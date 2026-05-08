@@ -20,30 +20,50 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/report_card_header"
-            android:orientation="vertical"
+            android:gravity="top"
+            android:orientation="horizontal"
             android:paddingStart="16dp"
             android:paddingTop="14dp"
-            android:paddingEnd="16dp"
+            android:paddingEnd="8dp"
             android:paddingBottom="14dp">
 
-            <TextView
-                android:id="@+id/text_event_title"
-                android:layout_width="match_parent"
+            <LinearLayout
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:textAppearance="@style/TextAppearance.SoakSafe.ReportCardTitle"
-                tools:text="05/07/2026 11:35 AM" />
+                android:layout_weight="1"
+                android:orientation="vertical">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:background="@drawable/bg_report_subtitle_chip"
-                android:paddingStart="10dp"
-                android:paddingTop="5dp"
-                android:paddingEnd="10dp"
-                android:paddingBottom="5dp"
-                android:text="@string/report_card_subtitle"
-                android:textAppearance="@style/TextAppearance.SoakSafe.ReportCardSubtitle" />
+                <TextView
+                    android:id="@+id/text_event_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="@style/TextAppearance.SoakSafe.ReportCardTitle"
+                    tools:text="05/07/2026 11:35 AM" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:background="@drawable/bg_report_subtitle_chip"
+                    android:paddingStart="10dp"
+                    android:paddingTop="5dp"
+                    android:paddingEnd="10dp"
+                    android:paddingBottom="5dp"
+                    android:text="@string/report_card_subtitle"
+                    android:textAppearance="@style/TextAppearance.SoakSafe.ReportCardSubtitle" />
+            </LinearLayout>
+
+            <androidx.appcompat.widget.AppCompatImageButton
+                android:id="@+id/button_edit_event"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_marginStart="4dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/report_edit_event"
+                android:padding="12dp"
+                android:scaleType="fitCenter"
+                app:srcCompat="@drawable/ic_edit_24"
+                app:tint="@color/report_text_dark" />
         </LinearLayout>
 
         <View

@@ -38,7 +38,7 @@ public class HomeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = ActivityHomeBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-        AppBarInsetsHelper.applyTopWindowInsets(binding.getRoot());
+        AppBarInsetsHelper.applyTopWindowInsets(binding.homeScroll);
 
         userRepository = ((SoakSafeApplication) getApplication()).getUserRepository();
 

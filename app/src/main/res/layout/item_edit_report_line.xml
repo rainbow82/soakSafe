@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center_vertical"
+    android:minHeight="52dp"
+    android:orientation="horizontal"
+    android:paddingStart="12dp"
+    android:paddingTop="10dp"
+    android:paddingEnd="8dp"
+    android:paddingBottom="10dp">
+
+    <com.google.android.material.textfield.TextInputEditText
+        android:id="@+id/edit_line_label"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:hint="@string/edit_line_item_hint"
+        android:inputType="textCapSentences"
+        android:maxLines="2"
+        android:textColor="@color/maint_text_primary"
+        android:textSize="15sp"
+        tools:text="Vacuum" />
+
+    <com.google.android.material.textfield.TextInputEditText
+        android:id="@+id/edit_line_amount"
+        android:layout_width="80dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:gravity="end|center_vertical"
+        android:hint="@string/chemical_amount_hint"
+        android:importantForAutofill="no"
+        android:inputType="numberDecimal|numberSigned"
+        android:maxLines="1"
+        android:textColor="@color/maint_text_primary"
+        android:textSize="14sp"
+        tools:text="2" />
+
+    <androidx.appcompat.widget.AppCompatImageButton
+        android:id="@+id/button_remove_line"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="4dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="@string/edit_line_remove"
+        android:padding="12dp"
+        app:srcCompat="@drawable/ic_delete_24"
+        app:tint="@color/maint_text_primary" />
+</LinearLayout>

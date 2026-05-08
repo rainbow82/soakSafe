@@ -5,6 +5,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.wgu.d424.soaksafe.R;
@@ -16,7 +17,21 @@ import java.util.List;
 
 public class MaintenanceEventAdapter extends RecyclerView.Adapter<MaintenanceEventAdapter.Holder> {
 
+    public interface OnEditClickListener {
+        void onEditClick(long eventId);
+    }
+
     private final List<MaintenanceEventUiModel> rows = new ArrayList<>();
+    @Nullable
+    private final OnEditClickListener editClickListener;
+
+    public MaintenanceEventAdapter() {
+        this(null);
+    }
+
+    public MaintenanceEventAdapter(@Nullable OnEditClickListener editClickListener) {
+        this.editClickListener = editClickListener;
+    }
 
     public void setRows(@NonNull List<MaintenanceEventUiModel> events) {
         rows.clear();
@@ -39,6 +54,12 @@ public class MaintenanceEventAdapter extends RecyclerView.Adapter<MaintenanceEve
     public void onBindViewHolder(@NonNull Holder holder, int position) {
         MaintenanceEventUiModel row = rows.get(position);
         holder.binding.textEventTitle.setText(row.timeLabel);
+
+        holder.binding.buttonEditEvent.setOnClickListener(v -> {
+            if (editClickListener != null) {
+                editClickListener.onEditClick(row.eventId);
+            }
+        });
 
         holder.binding.layoutEventRows.removeAllViews();
         LayoutInflater inflater = LayoutInflater.from(holder.binding.getRoot().getContext());

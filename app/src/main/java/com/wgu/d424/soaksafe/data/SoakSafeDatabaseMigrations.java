@@ -93,4 +93,26 @@ public final class SoakSafeDatabaseMigrations {
                     + "ON `maintenance_events` (`userId`)");
         }
     };
+
+    public static final Migration MIGRATION_6_7 = new Migration(6, 7) {
+        @Override
+        public void migrate(@NonNull SupportSQLiteDatabase db) {
+            db.execSQL("ALTER TABLE maintenance_events ADD COLUMN line_items_json TEXT");
+        }
+    };
+
+    public static final Migration MIGRATION_7_8 = new Migration(7, 8) {
+        @Override
+        public void migrate(@NonNull SupportSQLiteDatabase db) {
+            db.execSQL("ALTER TABLE maintenance_checklist ADD COLUMN custom_lines_json TEXT");
+        }
+    };
+
+    public static final Migration MIGRATION_8_9 = new Migration(8, 9) {
+        @Override
+        public void migrate(@NonNull SupportSQLiteDatabase db) {
+            db.execSQL("ALTER TABLE users ADD COLUMN pool_size_gallons INTEGER NOT NULL DEFAULT 0");
+            db.execSQL("ALTER TABLE users ADD COLUMN pool_salt_water INTEGER NOT NULL DEFAULT 0");
+        }
+    };
 }

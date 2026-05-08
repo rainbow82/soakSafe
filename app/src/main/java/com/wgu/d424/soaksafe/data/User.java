@@ -1,6 +1,7 @@
 package com.wgu.d424.soaksafe.data;
 
 import androidx.annotation.NonNull;
+import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.Index;
 import androidx.room.PrimaryKey;
@@ -22,6 +23,12 @@ public class User {
 
     @NonNull
     private String fullName = "";
+
+    @ColumnInfo(name = "pool_size_gallons")
+    private int poolSizeGallons;
+
+    @ColumnInfo(name = "pool_salt_water")
+    private boolean poolSaltWater;
 
     public long getId() {
         return id;
@@ -56,5 +63,21 @@ public class User {
 
     public void setFullName(@NonNull String fullName) {
         this.fullName = fullName;
+    }
+
+    public int getPoolSizeGallons() {
+        return poolSizeGallons;
+    }
+
+    public void setPoolSizeGallons(int poolSizeGallons) {
+        this.poolSizeGallons = poolSizeGallons;
+    }
+
+    public boolean isPoolSaltWater() {
+        return poolSaltWater;
+    }
+
+    public void setPoolSaltWater(boolean poolSaltWater) {
+        this.poolSaltWater = poolSaltWater;
     }
 }
