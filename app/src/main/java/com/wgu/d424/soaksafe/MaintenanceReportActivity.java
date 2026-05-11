@@ -128,7 +128,7 @@ public class MaintenanceReportActivity extends AppCompatActivity {
             }
         }
 
-        adapter.setRows(ReportEventRowsFactory.toUiModels(this, filtered, dateTimeFormat));
+        adapter.setRows(ReportEventRowsFactory.toUiModels(this, filtered, dateTimeFormat, query));
 
         if (allEvents.isEmpty()) {
             binding.textReportEmpty.setText(R.string.report_no_events);

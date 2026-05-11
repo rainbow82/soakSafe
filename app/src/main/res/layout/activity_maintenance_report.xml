@@ -35,24 +35,54 @@
             android:padding="16dp"
             app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/layout_report_search"
-                style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+            <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="12dp"
-                android:hint="@string/report_search_hint"
-                app:boxStrokeColor="@color/maint_outline"
-                app:hintTextColor="@color/maint_text_secondary">
+                app:cardBackgroundColor="@color/home_form_surface"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="3dp"
+                app:strokeColor="@color/home_input_outline"
+                app:strokeWidth="1dp">
 
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/edit_report_search"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="text"
-                    android:textColor="@color/maint_text_primary"
-                    android:textColorHint="@color/maint_text_secondary" />
-            </com.google.android.material.textfield.TextInputLayout>
+                    android:orientation="vertical"
+                    android:padding="12dp">
+
+                    <TextView
+                        android:id="@+id/label_report_search"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:labelFor="@id/edit_report_search"
+                        android:text="@string/report_search_hint"
+                        android:textAppearance="?attr/textAppearanceTitleSmall"
+                        android:textColor="@color/home_form_on_surface" />
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/layout_report_search"
+                        style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        app:boxBackgroundColor="@color/home_form_surface"
+                        app:boxStrokeColor="@color/report_search_textinput_stroke"
+                        app:boxStrokeWidth="2dp"
+                        app:boxStrokeWidthFocused="2dp"
+                        app:hintEnabled="false">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/edit_report_search"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="@string/report_search_placeholder"
+                            android:inputType="text"
+                            android:textColor="@color/home_form_on_surface"
+                            android:textColorHint="@color/home_form_on_surface_variant" />
+                    </com.google.android.material.textfield.TextInputLayout>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
 
             <TextView
                 android:id="@+id/text_report_empty"
@@ -60,7 +90,7 @@
                 android:layout_height="wrap_content"
                 android:paddingVertical="8dp"
                 android:text="@string/report_no_events"
-                android:textColor="@color/maint_text_primary"
+                android:textColor="@android:color/white"
                 android:textSize="16sp"
                 android:visibility="gone" />
 

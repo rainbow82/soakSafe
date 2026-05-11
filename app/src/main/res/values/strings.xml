@@ -79,6 +79,7 @@
     <string name="error_pool_size_invalid">Enter your pool size as a whole number greater than zero.</string>
     <string name="maintenance_report_title">Maintenance Report</string>
     <string name="report_search_hint">Search tasks and chemicals</string>
+    <string name="report_search_placeholder">Type a task or chemical name</string>
     <string name="report_no_events">No maintenance events saved yet.</string>
     <string name="report_no_search_results">No entries match your search.</string>
     <string name="report_task_done_content_description">Completed</string>

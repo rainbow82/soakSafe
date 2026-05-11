@@ -3,6 +3,7 @@ package com.wgu.d424.soaksafe.report;
 import android.content.Context;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.wgu.d424.soaksafe.R;
 import com.wgu.d424.soaksafe.data.EventLineItem;
@@ -28,14 +29,52 @@ public final class ReportEventRowsFactory {
     public static List<MaintenanceEventUiModel> toUiModels(
             @NonNull Context context,
             @NonNull List<MaintenanceEvent> rows,
-            @NonNull SimpleDateFormat dateTimeFormat
+            @NonNull SimpleDateFormat dateTimeFormat,
+            @Nullable String searchQuery
     ) {
+        MaintenanceReportSearchFilter eventFilter = new MaintenanceReportSearchFilter(context);
+        boolean narrowLines =
+                searchQuery != null && !searchQuery.trim().isEmpty();
         List<MaintenanceEventUiModel> mapped = new ArrayList<>();
         for (MaintenanceEvent row : rows) {
             String time = dateTimeFormat.format(new Date(row.getEventTimeMillis()));
-            mapped.add(new MaintenanceEventUiModel(row.getId(), time, buildDetailRows(context, row)));
+            List<ReportDetailLine> details = buildDetailRows(context, row);
+            if (narrowLines) {
+                details = filterDetailLinesForSearch(details, searchQuery, row, eventFilter);
+            }
+            mapped.add(new MaintenanceEventUiModel(row.getId(), time, details));
         }
         return mapped;
+    }
+
+    /**
+     * Keeps only detail lines whose label/value text contains every search token. If nothing
+     * matches per-line but the event still matched the query (e.g. event type), returns all lines.
+     */
+    @NonNull
+    private static List<ReportDetailLine> filterDetailLinesForSearch(
+            @NonNull List<ReportDetailLine> allDetails,
+            @NonNull String rawQuery,
+            @NonNull MaintenanceEvent event,
+            @NonNull MaintenanceReportSearchFilter eventFilter
+    ) {
+        List<ReportDetailLine> filtered = new ArrayList<>();
+        for (ReportDetailLine line : allDetails) {
+            StringBuilder hay = new StringBuilder(line.label);
+            if (line.valueText != null && !line.valueText.isEmpty()) {
+                hay.append(' ').append(line.valueText);
+            }
+            if (MaintenanceReportSearchFilter.haystackContainsAllTokens(hay.toString(), rawQuery)) {
+                filtered.add(line);
+            }
+        }
+        if (!filtered.isEmpty()) {
+            return filtered;
+        }
+        if (eventFilter.matches(event, rawQuery)) {
+            return new ArrayList<>(allDetails);
+        }
+        return filtered;
     }
 
     @NonNull

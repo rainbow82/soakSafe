@@ -25,6 +25,17 @@ public final class MaintenanceReportSearchFilter {
     }
 
     public boolean matches(@NonNull MaintenanceEvent event, @Nullable String rawQuery) {
+        return haystackContainsAllTokens(buildHaystack(event), rawQuery);
+    }
+
+    /**
+     * True when every non-empty whitespace-separated token from {@code rawQuery} appears as a
+     * substring of {@code haystack} (case-insensitive, {@link Locale#US}).
+     */
+    public static boolean haystackContainsAllTokens(
+            @NonNull String haystack,
+            @Nullable String rawQuery
+    ) {
         if (rawQuery == null) {
             return true;
         }
@@ -32,12 +43,12 @@ public final class MaintenanceReportSearchFilter {
         if (normalized.isEmpty()) {
             return true;
         }
-        String haystack = buildHaystack(event).toLowerCase(Locale.US);
+        String hay = haystack.toLowerCase(Locale.US);
         for (String token : normalized.split("\\s+")) {
             if (token.isEmpty()) {
                 continue;
             }
-            if (!haystack.contains(token)) {
+            if (!hay.contains(token)) {
                 return false;
             }
         }

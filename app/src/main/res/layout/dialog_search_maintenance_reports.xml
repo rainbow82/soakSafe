@@ -14,6 +14,7 @@
         android:id="@+id/text_modal_search_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:labelFor="@id/edit_modal_report_search"
         android:text="@string/maintenance_search_modal_title"
         android:textAppearance="?attr/textAppearanceTitleLarge"
         android:textColor="@color/maint_text_primary" />
@@ -25,16 +26,20 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:hint="@string/report_search_hint"
-        app:boxStrokeColor="@color/maint_outline"
-        app:hintTextColor="@color/maint_text_secondary">
+        app:boxBackgroundColor="@color/home_form_surface"
+        app:boxStrokeColor="@color/report_search_textinput_stroke"
+        app:boxStrokeWidth="2dp"
+        app:boxStrokeWidthFocused="2dp"
+        app:hintTextColor="@color/home_form_on_surface_variant"
+        app:placeholderText="@string/report_search_placeholder">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/edit_modal_report_search"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="text"
-            android:textColor="@color/maint_text_primary"
-            android:textColorHint="@color/maint_text_secondary" />
+            android:textColor="@color/home_form_on_surface"
+            android:textColorHint="@color/home_form_on_surface_variant" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <TextView

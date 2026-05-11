@@ -17,4 +17,7 @@ public interface UserDao {
 
     @Insert(onConflict = OnConflictStrategy.ABORT)
     long insert(@NonNull User user);
+
+    @Query("UPDATE users SET password = :passwordHash WHERE id = :userId")
+    void updatePasswordHash(long userId, @NonNull String passwordHash);
 }

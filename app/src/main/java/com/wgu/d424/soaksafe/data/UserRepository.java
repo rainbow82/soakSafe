@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.wgu.d424.soaksafe.base.AsyncRepositoryBase;
+import com.wgu.d424.soaksafe.security.PasswordHasher;
 
 public class UserRepository extends AsyncRepositoryBase {
 
@@ -51,10 +52,13 @@ public class UserRepository extends AsyncRepositoryBase {
         runInBackground(() -> {
             User row = userDao.getByUsernameSync(u);
             LoginResult result;
-            if (row == null || !row.getPassword().equals(p)) {
+            if (row == null || !PasswordHasher.verify(row.getPassword(), p)) {
                 result = LoginResult.INVALID_CREDENTIALS;
                 runOnMainThread(() -> callback.onLogin(result, null));
             } else {
+                if (!PasswordHasher.isModernStoredForm(row.getPassword())) {
+                    userDao.updatePasswordHash(row.getId(), PasswordHasher.hash(p));
+                }
                 result = LoginResult.SUCCESS;
                 runOnMainThread(() -> callback.onLogin(result, row));
             }
@@ -84,7 +88,7 @@ public class UserRepository extends AsyncRepositoryBase {
                 User user = new User();
                 user.setFullName(name);
                 user.setUsername(u);
-                user.setPassword(p);
+                user.setPassword(PasswordHasher.hash(p));
                 user.setPoolSizeGallons(poolSizeGallons);
                 user.setPoolSaltWater(poolSaltWater);
                 userDao.insert(user);

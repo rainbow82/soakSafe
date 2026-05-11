@@ -527,7 +527,7 @@ public class MaintenanceDetailsActivity extends AppCompatActivity {
                     filtered.add(row);
                 }
             }
-            adapter.setRows(ReportEventRowsFactory.toUiModels(this, filtered, dateTimeFormat));
+            adapter.setRows(ReportEventRowsFactory.toUiModels(this, filtered, dateTimeFormat, query));
 
             if (allEvents.isEmpty()) {
                 sheet.textModalSearchEmpty.setText(R.string.report_no_events);
