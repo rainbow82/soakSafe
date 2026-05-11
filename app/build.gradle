@@ -1,13 +1,14 @@
 plugins {
     id 'com.android.application'
+    id 'com.google.gms.google-services'
 }
 
 android {
-    namespace 'com.wgu.d424.soaksafe'
+    namespace 'com.shannon.soaksafe'
     compileSdk 35
 
     defaultConfig {
-        applicationId 'com.wgu.d424.soaksafe'
+        applicationId 'com.shannon.soaksafe'
         minSdk 26
         targetSdk 35
         versionCode 1
