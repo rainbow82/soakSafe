@@ -37,6 +37,7 @@ import com.shannon.soaksafe.report.MaintenanceEventAdapter;
 import com.shannon.soaksafe.report.MaintenanceReportSearchFilter;
 import com.shannon.soaksafe.report.ReportEventRowsFactory;
 import com.shannon.soaksafe.util.AppBarInsetsHelper;
+import com.shannon.soaksafe.util.UserSessionPreferences;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -121,7 +122,18 @@ public class MaintenanceDetailsActivity extends AppCompatActivity {
         if (userId <= 0L) {
             setChipsEnabled(false);
             binding.fabAddCustomItem.setVisibility(android.view.View.GONE);
+            binding.buttonBottomSearch.setEnabled(false);
+            binding.buttonBottomSearch.setAlpha(0.4f);
+            binding.buttonBottomDocument.setEnabled(false);
+            binding.buttonBottomDocument.setAlpha(0.4f);
+            binding.buttonBottomPdf.setEnabled(false);
+            binding.buttonBottomPdf.setAlpha(0.4f);
             return;
+        }
+
+        String usernameExtra = getIntent().getStringExtra(EXTRA_USERNAME);
+        if (usernameExtra != null && !usernameExtra.trim().isEmpty()) {
+            UserSessionPreferences.saveLastSignedInUser(this, userId, usernameExtra.trim());
         }
 
         maintenanceRepository.saveDateMillis(userId, todayMillis, () -> {
@@ -468,6 +480,7 @@ public class MaintenanceDetailsActivity extends AppCompatActivity {
     }
 
     private void logoutToHome() {
+        UserSessionPreferences.clear(this);
         Intent intent = new Intent(this, HomeActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
@@ -624,6 +637,15 @@ public class MaintenanceDetailsActivity extends AppCompatActivity {
         binding.buttonBottomDocument.setOnClickListener(v -> {
             Intent report = new Intent(this, MaintenanceReportActivity.class);
             report.putExtra(MaintenanceReportActivity.EXTRA_USER_ID, userId);
+            startActivity(report);
+        });
+        binding.buttonBottomPdf.setOnClickListener(v -> {
+            if (userId <= 0L) {
+                return;
+            }
+            Intent report = new Intent(this, MaintenanceReportActivity.class);
+            report.putExtra(MaintenanceReportActivity.EXTRA_USER_ID, userId);
+            report.putExtra(MaintenanceReportActivity.EXTRA_OPEN_PDF_WHEN_READY, true);
             startActivity(report);
         });
     }

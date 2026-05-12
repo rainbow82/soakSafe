@@ -13,6 +13,7 @@ import com.shannon.soaksafe.data.User;
 import com.shannon.soaksafe.data.UserRepository;
 import com.shannon.soaksafe.databinding.ActivityHomeBinding;
 import com.shannon.soaksafe.util.AppBarInsetsHelper;
+import com.shannon.soaksafe.util.UserSessionPreferences;
 
 public class HomeActivity extends AppCompatActivity {
 
@@ -61,6 +62,11 @@ public class HomeActivity extends AppCompatActivity {
                     if (signedInUser == null) {
                         break;
                     }
+                    String display = signedInUser.getFullName();
+                    if (display == null || display.trim().isEmpty()) {
+                        display = signedInUser.getUsername();
+                    }
+                    UserSessionPreferences.saveLastSignedInUser(HomeActivity.this, signedInUser.getId(), display);
                     Intent maintenance = new Intent(this, MaintenanceDetailsActivity.class);
                     maintenance.putExtra(
                             MaintenanceDetailsActivity.EXTRA_USERNAME,

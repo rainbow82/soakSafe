@@ -1,0 +1,93 @@
+# SoakSafe — GitLab CI: Android debug APK + Firebase App Distribution
+#
+# --- GitLab CI/CD → Variables (Settings → CI/CD → Variables) ---
+#
+# Required for distribute job:
+#   FIREBASE_APP_ID
+#     Value from app/google-services.json → client → client_info → mobilesdk_app_id
+#     Example: 1:20052745810:android:cab76b43d0cb6899c7898b
+#
+#   FIREBASE_SERVICE_ACCOUNT_B64
+#     Base64 of your Firebase / GCP service account JSON (single line, no whitespace).
+#     macOS:  base64 -i service-account.json | tr -d '\n' | pbcopy
+#
+# Optional:
+#   FIREBASE_TESTER_GROUPS
+#     Comma-separated App Distribution group aliases. Default: testers
+#
+# The debug build does not require a release keystore. google-services.json must be
+# present in the repo under app/ (as in this project).
+
+stages:
+  - build
+  - distribute
+
+variables:
+  ANDROID_SDK_ROOT: "$CI_PROJECT_DIR/.android-sdk"
+  ANDROID_HOME: "$CI_PROJECT_DIR/.android-sdk"
+  GRADLE_USER_HOME: "$CI_PROJECT_DIR/.gradle"
+  GRADLE_OPTS: "-Dorg.gradle.daemon=false -Dorg.gradle.workers.max=2"
+
+default:
+  interruptible: true
+
+# Speed up repeat pipelines (SDK + Gradle caches).
+cache:
+  key:
+    files:
+      - gradle/wrapper/gradle-wrapper.properties
+    prefix: android-sdk-35
+  paths:
+    - .android-sdk
+    - .gradle/wrapper
+    - .gradle/caches
+
+assemble_debug:
+  stage: build
+  image: eclipse-temurin:17-jdk
+  before_script:
+    - apt-get update -qq && apt-get install -y -qq wget unzip > /dev/null
+    - chmod +x gradlew
+    # Android command-line tools (sdkmanager) — first pipeline run downloads; later runs use cache.
+    - mkdir -p "$ANDROID_SDK_ROOT/cmdline-tools"
+    - |
+      if [ ! -f "$ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager" ]; then
+        wget -nv -O /tmp/cmdline-tools.zip https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip
+        unzip -q /tmp/cmdline-tools.zip -d "$ANDROID_SDK_ROOT/cmdline-tools"
+        rm -rf "$ANDROID_SDK_ROOT/cmdline-tools/latest"
+        mv "$ANDROID_SDK_ROOT/cmdline-tools/cmdline-tools" "$ANDROID_SDK_ROOT/cmdline-tools/latest"
+      fi
+    - export PATH="$PATH:$ANDROID_SDK_ROOT/cmdline-tools/latest/bin"
+    - yes | sdkmanager --sdk_root="$ANDROID_SDK_ROOT" --licenses > /dev/null
+    - sdkmanager --sdk_root="$ANDROID_SDK_ROOT" "platforms;android-35" "build-tools;35.0.0" > /dev/null
+  script:
+    - ./gradlew :app:assembleDebug --stacktrace --no-daemon
+  artifacts:
+    paths:
+      - app/build/outputs/apk/debug/app-debug.apk
+    expire_in: 14 days
+
+distribute_firebase:
+  stage: distribute
+  image: node:20-bookworm-slim
+  needs:
+    - job: assemble_debug
+      artifacts: true
+  cache: []
+  before_script:
+    - apt-get update -qq && apt-get install -y -qq ca-certificates > /dev/null
+    - npm install -g firebase-tools@13
+    - test -n "$FIREBASE_APP_ID" || (echo "ERROR: Set CI variable FIREBASE_APP_ID" && exit 1)
+    - test -n "$FIREBASE_SERVICE_ACCOUNT_B64" || (echo "ERROR: Set CI variable FIREBASE_SERVICE_ACCOUNT_B64" && exit 1)
+    - echo "$FIREBASE_SERVICE_ACCOUNT_B64" | base64 -d > "$CI_PROJECT_DIR/firebase-sa.json"
+    - export GOOGLE_APPLICATION_CREDENTIALS="$CI_PROJECT_DIR/firebase-sa.json"
+  script:
+    - |
+      GROUPS="${FIREBASE_TESTER_GROUPS:-testers}"
+      firebase appdistribution:distribute app/build/outputs/apk/debug/app-debug.apk \
+        --app "$FIREBASE_APP_ID" \
+        --groups "$GROUPS" \
+        --release-notes "SoakSafe build | pipeline ${CI_PIPELINE_IID} | ${CI_COMMIT_SHORT_SHA}"
+  rules:
+    # School workflow: default integration branch is `working` (not main/master).
+    - if: $CI_COMMIT_BRANCH == "working"

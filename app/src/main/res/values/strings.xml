@@ -45,6 +45,7 @@
     <string name="bottom_bar_search">Search</string>
     <string name="bottom_bar_share">Share</string>
     <string name="bottom_bar_document">Document</string>
+    <string name="bottom_bar_pdf">Email or share PDF report</string>
     <string name="section_tasks">Tasks</string>
     <string name="section_chemicals">Chemicals</string>
     <string name="task_vacuum">Vacuum</string>
@@ -104,4 +105,24 @@
     <string name="report_updated">Report updated.</string>
     <string name="report_card_subtitle">Logged maintenance snapshot</string>
     <string name="maintenance_search_modal_title">Search maintenance</string>
+
+    <!-- PDF / email export -->
+    <string name="pdf_export_menu">Export PDF</string>
+    <string name="pdf_report_document_title">SoakSafe — Maintenance Report</string>
+    <string name="pdf_report_generated_line">Generated: %1$s</string>
+    <string name="pdf_report_owner_line">Owner: %1$s</string>
+    <string name="pdf_owner_fallback">Pool owner</string>
+    <string name="pdf_col_datetime">Date &amp; time</string>
+    <string name="pdf_col_item">Item</string>
+    <string name="pdf_col_value_status">Amount / status</string>
+    <string name="pdf_value_completed">Done</string>
+    <string name="pdf_share_subject">SoakSafe maintenance report</string>
+    <string name="pdf_share_body">Attached: SoakSafe maintenance report (PDF).</string>
+    <string name="pdf_share_chooser_title">Share report</string>
+    <string name="pdf_export_ready_title">Report ready</string>
+    <string name="pdf_action_share">Share or email…</string>
+    <string name="pdf_action_save">Save to device…</string>
+    <string name="pdf_saved">Report saved.</string>
+    <string name="pdf_export_no_data">No maintenance entries to export yet.</string>
+    <string name="pdf_export_failed">Could not create the PDF. Try again.</string>
 </resources>

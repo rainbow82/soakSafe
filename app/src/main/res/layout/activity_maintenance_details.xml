@@ -127,6 +127,17 @@
                 android:padding="12dp"
                 android:scaleType="fitCenter"
                 app:srcCompat="@drawable/ic_document_outline_24" />
+
+            <androidx.appcompat.widget.AppCompatImageButton
+                android:id="@+id/button_bottom_pdf"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_marginStart="4dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/bottom_bar_pdf"
+                android:padding="12dp"
+                android:scaleType="fitCenter"
+                app:srcCompat="@drawable/ic_share_nodes_outline_24" />
         </LinearLayout>
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
