@@ -58,7 +58,11 @@ assemble_debug:
         mv "$ANDROID_SDK_ROOT/cmdline-tools/cmdline-tools" "$ANDROID_SDK_ROOT/cmdline-tools/latest"
       fi
     - export PATH="$PATH:$ANDROID_SDK_ROOT/cmdline-tools/latest/bin"
-    - yes | sdkmanager --sdk_root="$ANDROID_SDK_ROOT" --licenses > /dev/null
+    # License files avoid `yes | sdkmanager --licenses` (breaks under bash pipefail when yes gets SIGPIPE).
+    - |
+      mkdir -p "$ANDROID_SDK_ROOT/licenses"
+      printf '%s\n' "24333f8a63b6825ea9c5514f83c2829b004d1fee" > "$ANDROID_SDK_ROOT/licenses/android-sdk-license"
+      printf '%s\n' "84831b9409646a918e30573bab4c9c91346d8abd" > "$ANDROID_SDK_ROOT/licenses/android-sdk-preview-license"
     - sdkmanager --sdk_root="$ANDROID_SDK_ROOT" "platforms;android-35" "build-tools;35.0.0" > /dev/null
   script:
     - ./gradlew :app:assembleDebug --stacktrace --no-daemon
