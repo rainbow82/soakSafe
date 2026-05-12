@@ -3,13 +3,19 @@
 # --- GitLab CI/CD → Variables (Settings → CI/CD → Variables) ---
 #
 # Required for distribute job:
-#   FIREBASE_APP_ID
-#     Value from app/google-services.json → client → client_info → mobilesdk_app_id
-#     Example: 1:20052745810:android:cab76b43d0cb6899c7898b
+#   FIREBASE_APP_ID (optional)
+#     If unset, CI reads mobilesdk_app_id from app/google-services.json (first Android client).
+#     Override via GitLab variable if you use a different Firebase app than that file.
 #
-#   FIREBASE_SERVICE_ACCOUNT_B64
-#     Base64 of your Firebase / GCP service account JSON (single line, no whitespace).
-#     macOS:  base64 -i service-account.json | tr -d '\n' | pbcopy
+#   FIREBASE_SERVICE_ACCOUNT_JSON
+#     Service account JSON used by Firebase CLI (App Distribution).
+#     Recommended: CI/CD Variable type "File", upload the .json (runner exposes the var as a temp path).
+#     Or: Variable type "Variable" with base64-encoded JSON (single line). macOS:
+#       base64 -i service-account.json | tr -d '\n' | pbcopy
+#     Or: Variable with raw JSON if the value starts with "{" (single-line JSON only).
+#
+#   FIREBASE_SERVICE_ACCOUNT_B64 (legacy)
+#     Same as base64 in FIREBASE_SERVICE_ACCOUNT_JSON; supported if you already created this name.
 #
 # Optional:
 #   FIREBASE_TESTER_GROUPS
@@ -81,9 +87,28 @@ distribute_firebase:
   before_script:
     - apt-get update -qq && apt-get install -y -qq ca-certificates > /dev/null
     - npm install -g firebase-tools@13
-    - 'test -n "$FIREBASE_APP_ID" || (echo "ERROR: Set CI variable FIREBASE_APP_ID" && exit 1)'
-    - 'test -n "$FIREBASE_SERVICE_ACCOUNT_B64" || (echo "ERROR: Set CI variable FIREBASE_SERVICE_ACCOUNT_B64" && exit 1)'
-    - echo "$FIREBASE_SERVICE_ACCOUNT_B64" | base64 -d > "$CI_PROJECT_DIR/firebase-sa.json"
+    - export FIREBASE_APP_ID="${FIREBASE_APP_ID:-$(node -p "require(\"$CI_PROJECT_DIR/app/google-services.json\").client[0].client_info.mobilesdk_app_id")}"
+    - 'test -n "$FIREBASE_APP_ID" || (echo "ERROR: Set FIREBASE_APP_ID or commit app/google-services.json with mobilesdk_app_id" && exit 1)'
+    - |
+      sa_out="$CI_PROJECT_DIR/firebase-sa.json"
+      if [ -n "${FIREBASE_SERVICE_ACCOUNT_JSON:-}" ] && [ -f "$FIREBASE_SERVICE_ACCOUNT_JSON" ]; then
+        cp "$FIREBASE_SERVICE_ACCOUNT_JSON" "$sa_out"
+      elif [ -n "${FIREBASE_SERVICE_ACCOUNT_JSON:-}" ]; then
+        case "$FIREBASE_SERVICE_ACCOUNT_JSON" in
+          "{"*)
+            printf '%s\n' "$FIREBASE_SERVICE_ACCOUNT_JSON" > "$sa_out"
+            ;;
+          *)
+            echo "$FIREBASE_SERVICE_ACCOUNT_JSON" | tr -d '\r' | base64 -d > "$sa_out"
+            ;;
+        esac
+      elif [ -n "${FIREBASE_SERVICE_ACCOUNT_B64:-}" ]; then
+        echo "$FIREBASE_SERVICE_ACCOUNT_B64" | tr -d '\r' | base64 -d > "$sa_out"
+      else
+        echo "ERROR: Set FIREBASE_SERVICE_ACCOUNT_JSON (File with SA JSON, or Variable with base64 JSON). Legacy FIREBASE_SERVICE_ACCOUNT_B64 is also accepted." >&2
+        exit 1
+      fi
+      node -e "JSON.parse(require('fs').readFileSync(process.argv[1],'utf8'))" "$sa_out"
     - export GOOGLE_APPLICATION_CREDENTIALS="$CI_PROJECT_DIR/firebase-sa.json"
   script:
     - |
