@@ -77,8 +77,8 @@ distribute_firebase:
   before_script:
     - apt-get update -qq && apt-get install -y -qq ca-certificates > /dev/null
     - npm install -g firebase-tools@13
-    - test -n "$FIREBASE_APP_ID" || (echo "ERROR: Set CI variable FIREBASE_APP_ID" && exit 1)
-    - test -n "$FIREBASE_SERVICE_ACCOUNT_B64" || (echo "ERROR: Set CI variable FIREBASE_SERVICE_ACCOUNT_B64" && exit 1)
+    - 'test -n "$FIREBASE_APP_ID" || (echo "ERROR: Set CI variable FIREBASE_APP_ID" && exit 1)'
+    - 'test -n "$FIREBASE_SERVICE_ACCOUNT_B64" || (echo "ERROR: Set CI variable FIREBASE_SERVICE_ACCOUNT_B64" && exit 1)'
     - echo "$FIREBASE_SERVICE_ACCOUNT_B64" | base64 -d > "$CI_PROJECT_DIR/firebase-sa.json"
     - export GOOGLE_APPLICATION_CREDENTIALS="$CI_PROJECT_DIR/firebase-sa.json"
   script:
