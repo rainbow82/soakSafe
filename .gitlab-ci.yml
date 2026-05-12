@@ -23,7 +23,11 @@
 #
 # Optional:
 #   FIREBASE_TESTER_GROUPS
-#     Comma-separated App Distribution group aliases. Default: testers
+#     Comma-separated App Distribution group aliases (not display names). If unset, the job
+#     uploads the APK only (no tester/group notification). A 404 on distribute almost always
+#     means this alias does not exist yet — create it under App Distribution → Testers & Groups.
+#   FIREBASE_TESTER_EMAILS
+#     Comma-separated tester emails; passed as --testers when set (can be used with or without groups).
 #
 # The debug build does not require a release keystore. google-services.json must be
 # present in the repo under app/ (as in this project).
@@ -126,11 +130,16 @@ distribute_firebase:
     - export GOOGLE_APPLICATION_CREDENTIALS="$CI_PROJECT_DIR/firebase-sa.json"
   script:
     - |
-      GROUPS="${FIREBASE_TESTER_GROUPS:-testers}"
-      firebase appdistribution:distribute app/build/outputs/apk/debug/app-debug.apk \
+      set -- firebase appdistribution:distribute app/build/outputs/apk/debug/app-debug.apk \
         --app "$FIREBASE_APP_ID" \
-        --groups "$GROUPS" \
         --release-notes "SoakSafe build | pipeline ${CI_PIPELINE_IID} | ${CI_COMMIT_SHORT_SHA}"
+      if [ -n "${FIREBASE_TESTER_GROUPS:-}" ]; then
+        set -- "$@" --groups "$FIREBASE_TESTER_GROUPS"
+      fi
+      if [ -n "${FIREBASE_TESTER_EMAILS:-}" ]; then
+        set -- "$@" --testers "$FIREBASE_TESTER_EMAILS"
+      fi
+      "$@"
   rules:
     # School workflow: default integration branch is `working` (not main/master).
     - if: $CI_COMMIT_BRANCH == "working"
