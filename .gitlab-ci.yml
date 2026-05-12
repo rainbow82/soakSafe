@@ -13,6 +13,10 @@
 #     Or: Variable type "Variable" with base64-encoded JSON (single line). macOS:
 #       base64 -i service-account.json | tr -d '\n' | pbcopy
 #     Or: Variable with raw JSON if the value starts with "{" (single-line JSON only).
+#     Key must match exactly (GitLab is case-sensitive). If pipelines run on a fork, define variables on the fork.
+#
+#   FIREBASE_SERVICE_ACCOUNT (optional alias)
+#     Same formats as FIREBASE_SERVICE_ACCOUNT_JSON; used if FIREBASE_SERVICE_ACCOUNT_JSON is unset.
 #
 #   FIREBASE_SERVICE_ACCOUNT_B64 (legacy)
 #     Same as base64 in FIREBASE_SERVICE_ACCOUNT_JSON; supported if you already created this name.
@@ -91,21 +95,31 @@ distribute_firebase:
     - 'test -n "$FIREBASE_APP_ID" || (echo "ERROR: Set FIREBASE_APP_ID or commit app/google-services.json with mobilesdk_app_id" && exit 1)'
     - |
       sa_out="$CI_PROJECT_DIR/firebase-sa.json"
-      if [ -n "${FIREBASE_SERVICE_ACCOUNT_JSON:-}" ] && [ -f "$FIREBASE_SERVICE_ACCOUNT_JSON" ]; then
-        cp "$FIREBASE_SERVICE_ACCOUNT_JSON" "$sa_out"
-      elif [ -n "${FIREBASE_SERVICE_ACCOUNT_JSON:-}" ]; then
-        case "$FIREBASE_SERVICE_ACCOUNT_JSON" in
-          "{"*)
-            printf '%s\n' "$FIREBASE_SERVICE_ACCOUNT_JSON" > "$sa_out"
-            ;;
-          *)
-            echo "$FIREBASE_SERVICE_ACCOUNT_JSON" | tr -d '\r' | base64 -d > "$sa_out"
-            ;;
-        esac
+      write_sa_from_value() {
+        _v="$1"
+        if [ -f "$_v" ]; then
+          cp "$_v" "$sa_out"
+        else
+          case "$_v" in
+            "{"*)
+              printf '%s\n' "$_v" > "$sa_out"
+              ;;
+            *)
+              echo "$_v" | tr -d '\r' | base64 -d > "$sa_out"
+              ;;
+          esac
+        fi
+      }
+      if [ -n "${FIREBASE_SERVICE_ACCOUNT_JSON:-}" ]; then
+        write_sa_from_value "$FIREBASE_SERVICE_ACCOUNT_JSON"
+      elif [ -n "${FIREBASE_SERVICE_ACCOUNT:-}" ]; then
+        write_sa_from_value "$FIREBASE_SERVICE_ACCOUNT"
       elif [ -n "${FIREBASE_SERVICE_ACCOUNT_B64:-}" ]; then
         echo "$FIREBASE_SERVICE_ACCOUNT_B64" | tr -d '\r' | base64 -d > "$sa_out"
       else
-        echo "ERROR: Set FIREBASE_SERVICE_ACCOUNT_JSON (File with SA JSON, or Variable with base64 JSON). Legacy FIREBASE_SERVICE_ACCOUNT_B64 is also accepted." >&2
+        echo "ERROR: No service account in job environment (FIREBASE_SERVICE_ACCOUNT_JSON / FIREBASE_SERVICE_ACCOUNT / FIREBASE_SERVICE_ACCOUNT_B64 all empty)." >&2
+        echo "Fix in GitLab: Settings → CI/CD → Variables on THIS project (forks do not inherit secrets). Key must match exactly." >&2
+        echo "If the variable exists: uncheck Protect variable unless the branch is protected, or set Environment scope to *." >&2
         exit 1
       fi
       node -e "JSON.parse(require('fs').readFileSync(process.argv[1],'utf8'))" "$sa_out"
