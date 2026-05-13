@@ -96,4 +96,4 @@ If any test **fails**, paste the stack trace from `app/build/reports/tests/testD
 
 | Version | Date       | Notes |
 |---------|------------|--------|
-| 1.0 | 2026-05-13 | Initial plan + expanded unit test suite. |
+| 1.1     | 2026-05-13 | Initial plan + expanded unit test suite. |
