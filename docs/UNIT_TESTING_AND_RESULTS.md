@@ -1,6 +1,6 @@
 # SoakSafe — Unit testing documentation
 
-This document satisfies capstone-style reporting for **how the product was tested** at the unit level: a **test plan**, references to **test scripts** (source in the repo), **expected results**, guidance for **screenshots** you attach from your own machine, and a **summary of outcomes** after running the plan.
+This document satisfies capstone-style reporting for **how the product was tested** at the unit level: a **test plan**, references to **test scripts** (source in the repo), **expected results**, and a **summary of outcomes** after running the plan.
 
 **Automated unit test count:** **15** `@Test` methods across **4** test classes (see section 3).
 
@@ -52,47 +52,7 @@ These **are** the automated scripts; assessors can open the files directly in th
 
 ---
 
-## 4. How to capture screenshots (attach to your submission)
-
-Screenshots cannot be committed here on your behalf; capture these locally and embed or attach PDFs as your course requires.
-
-### Screenshot A — Gradle CLI success
-
-1. Open a terminal in the project root.  
-2. Run: `./gradlew :app:testDebugUnitTest`  
-3. Capture the window showing **`BUILD SUCCESSFUL`** and the task list including `:app:testDebugUnitTest`.
-
-**Suggested filename:** `screenshot-gradle-unit-tests-success.png`
-
-### Screenshot B — Android Studio test runner
-
-1. Open the project in **Android Studio**.  
-2. In the **Project** view, expand `app/src/test/java`.  
-3. Right-click `com.shannon.soaksafe` (or the `app` module) → **Run ‘All Tests’** (or run an individual class).  
-4. Capture the **Run** tool window showing green passes and the test tree.
-
-**Suggested filename:** `screenshot-android-studio-tests-green.png`
-
-### Screenshot C (optional) — HTML report
-
-After Gradle tests run, open:
-
-`app/build/reports/tests/testDebugUnitTest/index.html`
-
-in a browser and capture the summary page.
-
-**Suggested filename:** `screenshot-html-test-report.png`
-
-**Markdown embed example (after you add images to your submission folder):**
-
-```markdown
-![Gradle unit tests](screenshot-gradle-unit-tests-success.png)
-![Android Studio Run tests](screenshot-android-studio-tests-green.png)
-```
-
----
-
-## 5. Results vs test plan (fill after you execute)
+## 4. Results vs test plan (fill after you execute)
 
 Run `./gradlew :app:testDebugUnitTest` on your machine, then paste the final lines here (example below). Replace with your actual timestamp and counts.
 
@@ -112,7 +72,7 @@ If any test **fails**, paste the stack trace from `app/build/reports/tests/testD
 
 ---
 
-## 6. Summaries of changes resulting from completed tests
+## 5. Summaries of changes resulting from completed tests
 
 | When | Outcome |
 |------|---------|
@@ -125,7 +85,7 @@ If any test **fails**, paste the stack trace from `app/build/reports/tests/testD
 
 ---
 
-## 7. Relation to other testing (manual / system)
+## 6. Relation to other testing (manual / system)
 
 - **Manual:** sign-in, checklist save, maintenance report list, PDF share/save, and navigation were exercised on emulator/device during development.  
 - **Unit tests:** focus on **deterministic** logic (crypto, JSON, search tokens, formatting) that is expensive or repetitive to verify by hand.
@@ -134,6 +94,6 @@ If any test **fails**, paste the stack trace from `app/build/reports/tests/testD
 
 ## Document history
 
-| Version | Date | Notes |
-|---------|------|--------|
-| 1.0 | 2026-05-11 | Initial plan + expanded unit test suite. |
+| Version | Date       | Notes |
+|---------|------------|--------|
+| 1.0 | 2026-05-13 | Initial plan + expanded unit test suite. |
