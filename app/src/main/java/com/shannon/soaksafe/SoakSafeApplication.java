@@ -3,12 +3,16 @@ package com.shannon.soaksafe;
 import android.app.Application;
 
 import androidx.annotation.NonNull;
+import androidx.lifecycle.DefaultLifecycleObserver;
+import androidx.lifecycle.LifecycleOwner;
+import androidx.lifecycle.ProcessLifecycleOwner;
 import androidx.room.Room;
 
 import com.shannon.soaksafe.data.MaintenanceRepository;
 import com.shannon.soaksafe.data.SoakSafeDatabase;
 import com.shannon.soaksafe.data.SoakSafeDatabaseMigrations;
 import com.shannon.soaksafe.data.UserRepository;
+import com.shannon.soaksafe.util.AppIconManager;
 
 public class SoakSafeApplication extends Application {
 
@@ -41,6 +45,14 @@ public class SoakSafeApplication extends Application {
                 db.maintenanceEventDao(),
                 this
         );
+
+        AppIconManager.schedulePeriodicRefresh(this);
+        ProcessLifecycleOwner.get().getLifecycle().addObserver(new DefaultLifecycleObserver() {
+            @Override
+            public void onStart(@NonNull LifecycleOwner owner) {
+                AppIconManager.onAppForeground(SoakSafeApplication.this);
+            }
+        });
     }
 
     @NonNull
