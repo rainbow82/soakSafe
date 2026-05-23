@@ -65,6 +65,13 @@ public class UserRepository extends AsyncRepositoryBase {
         });
     }
 
+    public void loadUserById(long userId, @NonNull Callback<User> callback) {
+        runInBackground(() -> {
+            User row = userId > 0L ? userDao.getByIdSync(userId) : null;
+            runOnMainThread(() -> callback.onResult(row));
+        });
+    }
+
     public void registerUser(
             @NonNull String fullName,
             @NonNull String username,

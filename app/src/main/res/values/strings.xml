@@ -6,6 +6,17 @@
     <string name="password_label">Password</string>
     <string name="full_name_label">Full name</string>
     <string name="sign_in">Sign in</string>
+    <string name="biometric_enable_label">Use fingerprint to sign in</string>
+    <string name="biometric_sign_in">Sign in with fingerprint</string>
+    <string name="biometric_prompt_title">Confirm fingerprint</string>
+    <string name="biometric_prompt_subtitle">Use your fingerprint to sign in to SoakSafe</string>
+    <string name="biometric_not_recognized">Fingerprint not recognized. Try again.</string>
+    <string name="biometric_enabled">Fingerprint sign-in enabled for this account.</string>
+    <string name="biometric_disabled">Fingerprint sign-in turned off.</string>
+    <string name="biometric_unavailable">Fingerprint sign-in is not available on this device.</string>
+    <string name="biometric_none_enrolled">Add a fingerprint in Android Settings to use this option.</string>
+    <string name="biometric_enable_requires_password">Sign in with your password first to enable fingerprint.</string>
+    <string name="biometric_account_missing">Saved account no longer exists. Sign in with your password.</string>
     <string name="create_account">Create account</string>
     <string name="create_account_title">Create account</string>
     <string name="save_account">Save account</string>
