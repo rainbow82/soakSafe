@@ -1,5 +1,6 @@
 package com.shannon.soaksafe;
 
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
@@ -12,11 +13,16 @@ import com.google.android.material.snackbar.Snackbar;
 import com.shannon.soaksafe.data.UserRepository;
 import com.shannon.soaksafe.databinding.ActivityCreateAccountBinding;
 import com.shannon.soaksafe.util.AppBarInsetsHelper;
+import com.shannon.soaksafe.util.ProfileImagePicker;
+import com.shannon.soaksafe.util.ProfileImageStore;
 
 public class CreateAccountActivity extends AppCompatActivity {
 
     private ActivityCreateAccountBinding binding;
     private UserRepository userRepository;
+    @Nullable
+    private Uri pendingProfileUri;
+    private ProfileImagePicker profileImagePicker;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -35,6 +41,18 @@ public class CreateAccountActivity extends AppCompatActivity {
 
         binding.togglePoolType.check(R.id.button_pool_fresh);
 
+        profileImagePicker = new ProfileImagePicker(
+                this,
+                binding.profilePhotoSection.imageProfilePhoto,
+                uri -> {
+                    pendingProfileUri = uri;
+                    updatePhotoActions();
+                }
+        );
+        binding.profilePhotoSection.buttonChangeProfilePhoto.setOnClickListener(v -> profileImagePicker.launch());
+        binding.profilePhotoSection.buttonRemoveProfilePhoto.setOnClickListener(v -> clearPendingPhoto());
+        updatePhotoActions();
+
         binding.buttonSaveAccount.setOnClickListener(v -> attemptCreateAccount());
     }
 
@@ -45,6 +63,20 @@ public class CreateAccountActivity extends AppCompatActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void clearPendingPhoto() {
+        pendingProfileUri = null;
+        ProfileImageStore.bindPlaceholder(binding.profilePhotoSection.imageProfilePhoto);
+        updatePhotoActions();
+    }
+
+    private void updatePhotoActions() {
+        boolean hasPhoto = pendingProfileUri != null;
+        binding.profilePhotoSection.buttonChangeProfilePhoto.setText(
+                hasPhoto ? R.string.profile_photo_change : R.string.profile_photo_add
+        );
+        binding.profilePhotoSection.buttonRemoveProfilePhoto.setVisibility(hasPhoto ? View.VISIBLE : View.GONE);
     }
 
     private void attemptCreateAccount() {
@@ -76,30 +108,50 @@ public class CreateAccountActivity extends AppCompatActivity {
         }
         boolean poolSaltWater = checkedType == R.id.button_pool_salt;
 
-        userRepository.registerUser(fullName, username, password, poolSizeGallons, poolSaltWater, result -> {
-            switch (result) {
-                case SUCCESS:
-                    setResult(RESULT_OK);
-                    finish();
-                    overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-                    break;
-                case USERNAME_TAKEN:
-                    Snackbar.make(
-                            binding.getRoot(),
-                            R.string.error_username_taken,
-                            Snackbar.LENGTH_LONG
-                    ).show();
-                    break;
-                case EMPTY_FIELDS:
-                    Snackbar.make(
-                            binding.getRoot(),
-                            R.string.error_create_empty,
-                            Snackbar.LENGTH_LONG
-                    ).show();
-                    break;
-                default:
-                    break;
-            }
-        });
+        userRepository.registerUser(
+                fullName,
+                username,
+                password,
+                poolSizeGallons,
+                poolSaltWater,
+                (result, createdUser) -> {
+                    switch (result) {
+                        case SUCCESS:
+                            if (createdUser != null && pendingProfileUri != null) {
+                                if (!ProfileImageStore.saveFromUri(
+                                        this,
+                                        createdUser.getId(),
+                                        pendingProfileUri
+                                )) {
+                                    Snackbar.make(
+                                            binding.getRoot(),
+                                            R.string.profile_photo_save_failed,
+                                            Snackbar.LENGTH_LONG
+                                    ).show();
+                                }
+                            }
+                            setResult(RESULT_OK);
+                            finish();
+                            overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+                            break;
+                        case USERNAME_TAKEN:
+                            Snackbar.make(
+                                    binding.getRoot(),
+                                    R.string.error_username_taken,
+                                    Snackbar.LENGTH_LONG
+                            ).show();
+                            break;
+                        case EMPTY_FIELDS:
+                            Snackbar.make(
+                                    binding.getRoot(),
+                                    R.string.error_create_empty,
+                                    Snackbar.LENGTH_LONG
+                            ).show();
+                            break;
+                        default:
+                            break;
+                    }
+                }
+        );
     }
 }

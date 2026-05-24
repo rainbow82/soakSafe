@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center_horizontal"
+    android:orientation="vertical"
+    android:paddingBottom="8dp">
+
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/image_profile_photo"
+        android:layout_width="96dp"
+        android:layout_height="96dp"
+        android:background="@color/frosted_surface_high"
+        android:contentDescription="@string/profile_photo_content_description"
+        android:padding="12dp"
+        android:scaleType="center"
+        android:src="@drawable/ic_profile_circle_24"
+        app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.SoakSafe.Circle"
+        app:strokeColor="@color/frosted_outline"
+        app:strokeWidth="1dp" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/button_change_profile_photo"
+        style="@style/Widget.Material3.Button.TextButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:text="@string/profile_photo_add" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/button_remove_profile_photo"
+        style="@style/Widget.Material3.Button.TextButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/profile_photo_remove"
+        android:visibility="gone" />
+</LinearLayout>

@@ -29,7 +29,19 @@ public class UserRepository extends AsyncRepositoryBase {
     }
 
     public interface RegisterCallback {
-        void onRegister(@NonNull RegisterResult result);
+        void onRegister(@NonNull RegisterResult result, @Nullable User user);
+    }
+
+    public enum UpdateProfileResult {
+        SUCCESS,
+        USERNAME_TAKEN,
+        EMPTY_USERNAME,
+        INVALID_POOL_SIZE,
+        USER_NOT_FOUND
+    }
+
+    public interface UpdateProfileCallback {
+        void onUpdate(@NonNull UpdateProfileResult result, @Nullable User user);
     }
 
     private final UserDao userDao;
@@ -84,11 +96,12 @@ public class UserRepository extends AsyncRepositoryBase {
         String u = username.trim();
         String p = password;
         if (name.isEmpty() || u.isEmpty() || p.isEmpty()) {
-            callback.onRegister(RegisterResult.EMPTY_FIELDS);
+            callback.onRegister(RegisterResult.EMPTY_FIELDS, null);
             return;
         }
         runInBackground(() -> {
             RegisterResult result;
+            User created = null;
             if (userDao.countByUsername(u) > 0) {
                 result = RegisterResult.USERNAME_TAKEN;
             } else {
@@ -98,10 +111,54 @@ public class UserRepository extends AsyncRepositoryBase {
                 user.setPassword(PasswordHasher.hash(p));
                 user.setPoolSizeGallons(poolSizeGallons);
                 user.setPoolSaltWater(poolSaltWater);
-                userDao.insert(user);
+                long id = userDao.insert(user);
+                user.setId(id);
+                created = user;
                 result = RegisterResult.SUCCESS;
             }
-            runOnMainThread(() -> callback.onRegister(result));
+            User finalCreated = created;
+            RegisterResult finalResult = result;
+            runOnMainThread(() -> callback.onRegister(finalResult, finalCreated));
+        });
+    }
+
+    public void updateProfile(
+            long userId,
+            @NonNull String username,
+            int poolSizeGallons,
+            boolean poolSaltWater,
+            @NonNull UpdateProfileCallback callback
+    ) {
+        String u = username.trim();
+        if (u.isEmpty()) {
+            callback.onUpdate(UpdateProfileResult.EMPTY_USERNAME, null);
+            return;
+        }
+        if (poolSizeGallons <= 0) {
+            callback.onUpdate(UpdateProfileResult.INVALID_POOL_SIZE, null);
+            return;
+        }
+        runInBackground(() -> {
+            User row = userId > 0L ? userDao.getByIdSync(userId) : null;
+            if (row == null) {
+                runOnMainThread(() -> callback.onUpdate(UpdateProfileResult.USER_NOT_FOUND, null));
+                return;
+            }
+            UpdateProfileResult result;
+            User updated = null;
+            if (!row.getUsername().equalsIgnoreCase(u) && userDao.countByUsernameForOtherUser(u, userId) > 0) {
+                result = UpdateProfileResult.USERNAME_TAKEN;
+            } else {
+                userDao.updateProfile(userId, u, poolSizeGallons, poolSaltWater);
+                row.setUsername(u);
+                row.setPoolSizeGallons(poolSizeGallons);
+                row.setPoolSaltWater(poolSaltWater);
+                updated = row;
+                result = UpdateProfileResult.SUCCESS;
+            }
+            User finalUpdated = updated;
+            UpdateProfileResult finalResult = result;
+            runOnMainThread(() -> callback.onUpdate(finalResult, finalUpdated));
         });
     }
 }

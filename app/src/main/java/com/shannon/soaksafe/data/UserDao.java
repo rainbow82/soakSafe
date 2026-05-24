@@ -21,6 +21,18 @@ public interface UserDao {
     @Insert(onConflict = OnConflictStrategy.ABORT)
     long insert(@NonNull User user);
 
+    @Query("SELECT COUNT(*) FROM users WHERE username = :username COLLATE NOCASE AND id != :userId")
+    int countByUsernameForOtherUser(@NonNull String username, long userId);
+
+    @Query("UPDATE users SET username = :username, pool_size_gallons = :poolSizeGallons, "
+            + "pool_salt_water = :poolSaltWater WHERE id = :userId")
+    void updateProfile(
+            long userId,
+            @NonNull String username,
+            int poolSizeGallons,
+            boolean poolSaltWater
+    );
+
     @Query("UPDATE users SET password = :passwordHash WHERE id = :userId")
     void updatePasswordHash(long userId, @NonNull String passwordHash);
 }

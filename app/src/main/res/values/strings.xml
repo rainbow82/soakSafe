@@ -52,6 +52,16 @@
     <string name="menu_profile">Profile</string>
     <string name="menu_logout">Log out</string>
     <string name="menu_profile_content_description">Open profile</string>
+    <string name="profile_title">Profile</string>
+    <string name="save_profile">Save changes</string>
+    <string name="profile_saved">Profile updated.</string>
+    <string name="error_profile_username_empty">Enter a username.</string>
+    <string name="error_profile_not_found">Could not load your account.</string>
+    <string name="profile_photo_content_description">Profile photo</string>
+    <string name="profile_photo_add">Add photo</string>
+    <string name="profile_photo_change">Change photo</string>
+    <string name="profile_photo_remove">Remove photo</string>
+    <string name="profile_photo_save_failed">Could not save your photo. Try another image.</string>
     <string name="snackbar_menu_placeholder">Menu</string>
     <string name="bottom_bar_search">Search</string>
     <string name="bottom_bar_share">Share</string>

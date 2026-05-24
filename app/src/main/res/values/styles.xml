@@ -42,4 +42,9 @@
         <item name="android:textSize">13sp</item>
         <item name="android:letterSpacing">0.02</item>
     </style>
+
+    <style name="ShapeAppearanceOverlay.SoakSafe.Circle" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">50%</item>
+    </style>
 </resources>

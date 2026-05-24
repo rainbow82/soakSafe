@@ -9,6 +9,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
@@ -37,6 +39,7 @@ import com.shannon.soaksafe.report.MaintenanceEventAdapter;
 import com.shannon.soaksafe.report.MaintenanceReportSearchFilter;
 import com.shannon.soaksafe.report.ReportEventRowsFactory;
 import com.shannon.soaksafe.util.AppBarInsetsHelper;
+import com.shannon.soaksafe.util.ProfileImageStore;
 import com.shannon.soaksafe.util.UserSessionPreferences;
 
 import java.text.SimpleDateFormat;
@@ -78,6 +81,21 @@ public class MaintenanceDetailsActivity extends AppCompatActivity {
 
     private final SimpleDateFormat displayDateFormat =
             new SimpleDateFormat("MM/dd/yyyy", Locale.US);
+
+    private final ActivityResultLauncher<Intent> profileLauncher =
+            registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+                if (result.getResultCode() != RESULT_OK || result.getData() == null) {
+                    return;
+                }
+                String updatedUsername = result.getData().getStringExtra(ProfileActivity.EXTRA_USERNAME);
+                if (updatedUsername != null && !updatedUsername.trim().isEmpty()) {
+                    getIntent().putExtra(EXTRA_USERNAME, updatedUsername.trim());
+                    UserSessionPreferences.saveLastSignedInUser(this, userId, updatedUsername.trim());
+                }
+                if (result.getData().getBooleanExtra(ProfileActivity.EXTRA_PROFILE_IMAGE_CHANGED, false)) {
+                    invalidateOptionsMenu();
+                }
+            });
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -454,6 +472,17 @@ public class MaintenanceDetailsActivity extends AppCompatActivity {
     }
 
     @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        MenuItem profileItem = menu.findItem(R.id.action_profile);
+        if (profileItem != null && userId > 0L) {
+            float density = getResources().getDisplayMetrics().density;
+            int iconSizePx = (int) (32f * density);
+            profileItem.setIcon(ProfileImageStore.menuIcon(this, userId, iconSizePx));
+        }
+        return super.onPrepareOptionsMenu(menu);
+    }
+
+    @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == R.id.action_profile) {
             showProfileMenu();
@@ -467,7 +496,7 @@ public class MaintenanceDetailsActivity extends AppCompatActivity {
         popup.getMenuInflater().inflate(R.menu.menu_profile_popup, popup.getMenu());
         popup.setOnMenuItemClickListener(item -> {
             if (item.getItemId() == R.id.popup_profile) {
-                Snackbar.make(binding.getRoot(), R.string.menu_profile, Snackbar.LENGTH_SHORT).show();
+                openProfile();
                 return true;
             }
             if (item.getItemId() == R.id.popup_logout) {
@@ -477,6 +506,16 @@ public class MaintenanceDetailsActivity extends AppCompatActivity {
             return false;
         });
         popup.show();
+    }
+
+    private void openProfile() {
+        if (userId <= 0L) {
+            Snackbar.make(binding.getRoot(), R.string.error_profile_not_found, Snackbar.LENGTH_SHORT).show();
+            return;
+        }
+        Intent profile = new Intent(this, ProfileActivity.class);
+        profile.putExtra(ProfileActivity.EXTRA_USER_ID, userId);
+        profileLauncher.launch(profile);
     }
 
     private void logoutToHome() {

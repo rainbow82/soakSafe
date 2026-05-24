@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".CreateAccountActivity">
+    tools:context=".ProfileActivity">
 
     <include layout="@layout/include_pool_photo_background" />
 
@@ -61,30 +61,10 @@
                         layout="@layout/include_profile_photo_section" />
 
                     <com.google.android.material.textfield.TextInputLayout
-                        android:id="@+id/input_layout_full_name"
-                        style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:hint="@string/full_name_label"
-                        app:boxStrokeColor="@color/home_textinput_stroke_color"
-                        app:hintTextColor="@color/home_textinput_hint_color">
-
-                        <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/edit_full_name"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:inputType="textPersonName|textCapWords"
-                            android:maxLines="1"
-                            android:textColor="?attr/colorOnSurface"
-                            android:textColorHint="?attr/colorOnSurfaceVariant" />
-                    </com.google.android.material.textfield.TextInputLayout>
-
-                    <com.google.android.material.textfield.TextInputLayout
                         android:id="@+id/input_layout_username"
                         style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="12dp"
                         android:hint="@string/username_label"
                         app:boxStrokeColor="@color/home_textinput_stroke_color"
                         app:hintTextColor="@color/home_textinput_hint_color">
@@ -94,28 +74,6 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:inputType="text"
-                            android:maxLines="1"
-                            android:textColor="?attr/colorOnSurface"
-                            android:textColorHint="?attr/colorOnSurfaceVariant" />
-                    </com.google.android.material.textfield.TextInputLayout>
-
-                    <com.google.android.material.textfield.TextInputLayout
-                        android:id="@+id/input_layout_password"
-                        style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="12dp"
-                        android:hint="@string/password_label"
-                        app:boxStrokeColor="@color/home_textinput_stroke_color"
-                        app:endIconMode="password_toggle"
-                        app:endIconTint="?attr/colorOnSurfaceVariant"
-                        app:hintTextColor="@color/home_textinput_hint_color">
-
-                        <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/edit_password"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:inputType="textPassword"
                             android:maxLines="1"
                             android:textColor="?attr/colorOnSurface"
                             android:textColorHint="?attr/colorOnSurfaceVariant" />
@@ -182,11 +140,11 @@
                     </com.google.android.material.button.MaterialButtonToggleGroup>
 
                     <com.google.android.material.button.MaterialButton
-                        android:id="@+id/button_save_account"
+                        android:id="@+id/button_save_profile"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="24dp"
-                        android:text="@string/save_account" />
+                        android:text="@string/save_profile" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
         </androidx.core.widget.NestedScrollView>
