@@ -112,14 +112,7 @@ public class EditMaintenanceReportActivity extends AppCompatActivity {
 
     private void populateLines(@NonNull MaintenanceEvent event) {
         binding.containerEditChips.removeAllViews();
-        List<EventLineItem> lines;
-        String json = event.getLineItemsJson();
-        if (json != null && !json.trim().isEmpty()) {
-            lines = EventLineItemsCodec.decode(json);
-        } else {
-            lines = EventLineItemsCodec.fromLegacyEvent(event, this);
-        }
-        for (EventLineItem line : lines) {
+        for (EventLineItem line : EventLineItemsCodec.resolveLineItems(this, event)) {
             addLineRow(line);
         }
     }
@@ -143,7 +136,7 @@ public class EditMaintenanceReportActivity extends AppCompatActivity {
 
     private void showAddLineDialog() {
         DialogAddReportLineBinding dialogBinding = DialogAddReportLineBinding.inflate(getLayoutInflater());
-        AlertDialog dialog = new MaterialAlertDialogBuilder(this)
+        AlertDialog dialog = new MaterialAlertDialogBuilder(this, R.style.ThemeOverlay_SoakSafe_AlertDialog)
                 .setTitle(R.string.add_report_line_title)
                 .setView(dialogBinding.getRoot())
                 .setNegativeButton(android.R.string.cancel, (d, w) -> d.dismiss())
@@ -237,7 +230,7 @@ public class EditMaintenanceReportActivity extends AppCompatActivity {
     }
 
     private void confirmDelete() {
-        new MaterialAlertDialogBuilder(this)
+        new MaterialAlertDialogBuilder(this, R.style.ThemeOverlay_SoakSafe_AlertDialog)
                 .setTitle(R.string.delete_report)
                 .setMessage(R.string.delete_report_confirm)
                 .setNegativeButton(android.R.string.cancel, (d, w) -> d.dismiss())

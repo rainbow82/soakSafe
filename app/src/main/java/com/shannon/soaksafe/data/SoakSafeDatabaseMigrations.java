@@ -115,4 +115,11 @@ public final class SoakSafeDatabaseMigrations {
             db.execSQL("ALTER TABLE users ADD COLUMN pool_salt_water INTEGER NOT NULL DEFAULT 0");
         }
     };
+
+    public static final Migration MIGRATION_9_10 = new Migration(9, 10) {
+        @Override
+        public void migrate(@NonNull SupportSQLiteDatabase db) {
+            db.execSQL("ALTER TABLE users ADD COLUMN pool_above_ground INTEGER NOT NULL DEFAULT 0");
+        }
+    };
 }

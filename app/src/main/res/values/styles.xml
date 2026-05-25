@@ -47,4 +47,29 @@
         <item name="cornerFamily">rounded</item>
         <item name="cornerSize">50%</item>
     </style>
+
+    <style name="Widget.SoakSafe.SaveButton" parent="Widget.Material3.Button.UnelevatedButton">
+        <item name="backgroundTint">@color/maint_save_button</item>
+        <item name="android:textColor">@color/maint_save_button_text</item>
+        <item name="rippleColor">#660A1628</item>
+    </style>
+
+    <style name="Widget.SoakSafe.AddFab" parent="Widget.Material3.FloatingActionButton.Primary">
+        <item name="backgroundTint">@color/maint_save_button</item>
+        <item name="tint">@color/maint_save_button_text</item>
+    </style>
+
+    <!-- Dark label on frosted cards; blue stroke unchanged (passes WCAG AA on composited glass) -->
+    <style name="Widget.SoakSafe.OutlinedButton" parent="Widget.Material3.Button.OutlinedButton">
+        <item name="android:textColor">@color/soaksafe_outlined_button_text</item>
+        <item name="iconTint">@color/home_form_on_surface</item>
+        <item name="strokeColor">@color/home_primary</item>
+    </style>
+
+    <!-- Selected: green fill + dark text; unselected: dark text + blue outline -->
+    <style name="Widget.SoakSafe.OutlinedToggleButton" parent="Widget.SoakSafe.OutlinedButton">
+        <item name="android:textColor">@color/soaksafe_toggle_button_text</item>
+        <item name="backgroundTint">@color/soaksafe_toggle_button_background</item>
+        <item name="strokeColor">@color/soaksafe_toggle_button_stroke</item>
+    </style>
 </resources>

@@ -25,12 +25,13 @@ public interface UserDao {
     int countByUsernameForOtherUser(@NonNull String username, long userId);
 
     @Query("UPDATE users SET username = :username, pool_size_gallons = :poolSizeGallons, "
-            + "pool_salt_water = :poolSaltWater WHERE id = :userId")
+            + "pool_salt_water = :poolSaltWater, pool_above_ground = :poolAboveGround WHERE id = :userId")
     void updateProfile(
             long userId,
             @NonNull String username,
             int poolSizeGallons,
-            boolean poolSaltWater
+            boolean poolSaltWater,
+            boolean poolAboveGround
     );
 
     @Query("UPDATE users SET password = :passwordHash WHERE id = :userId")

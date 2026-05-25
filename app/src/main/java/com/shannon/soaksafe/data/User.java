@@ -30,6 +30,9 @@ public class User {
     @ColumnInfo(name = "pool_salt_water")
     private boolean poolSaltWater;
 
+    @ColumnInfo(name = "pool_above_ground")
+    private boolean poolAboveGround;
+
     public long getId() {
         return id;
     }
@@ -79,5 +82,13 @@ public class User {
 
     public void setPoolSaltWater(boolean poolSaltWater) {
         this.poolSaltWater = poolSaltWater;
+    }
+
+    public boolean isPoolAboveGround() {
+        return poolAboveGround;
+    }
+
+    public void setPoolAboveGround(boolean poolAboveGround) {
+        this.poolAboveGround = poolAboveGround;
     }
 }

@@ -29,6 +29,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.snackbar.Snackbar;
 import com.shannon.soaksafe.data.MaintenanceCustomLinesCodec;
 import com.shannon.soaksafe.data.MaintenanceEvent;
+import com.shannon.soaksafe.data.MaintenanceChecklist;
 import com.shannon.soaksafe.data.MaintenanceRepository;
 import com.shannon.soaksafe.databinding.ActivityMaintenanceDetailsBinding;
 import com.shannon.soaksafe.databinding.DialogAddCustomMaintenanceItemBinding;
@@ -159,7 +160,41 @@ public class MaintenanceDetailsActivity extends AppCompatActivity {
             binding.textMaintenanceDateValue.setText(formatDisplayDate(todayMillis));
         });
 
-        maintenanceRepository.loadChecklist(userId, row -> applyCustomLinesFromStored(row.getCustomLinesJson()));
+        maintenanceRepository.loadChecklist(userId, row -> {
+            applyChecklistToChips(row);
+            applyCustomLinesFromStored(row.getCustomLinesJson());
+        });
+    }
+
+    private void applyChecklistToChips(@NonNull MaintenanceChecklist row) {
+        setTaskChipActivated(0, row.isVacuum());
+        setTaskChipActivated(1, row.isCleanSkimmer());
+        setTaskChipActivated(2, row.isAddWater());
+        setTaskChipActivated(3, row.isBrushWalls());
+        applyChemicalChipFromChecklist(0, row.getChlorine());
+        applyChemicalChipFromChecklist(1, row.getPhUp());
+        applyChemicalChipFromChecklist(2, row.getPhDown());
+        applyChemicalChipFromChecklist(3, row.getNoPhos());
+    }
+
+    private void setTaskChipActivated(int taskIndex, boolean activated) {
+        ItemMaintenanceChipRowBinding chip = taskChipBindings[taskIndex];
+        if (chip == null) {
+            return;
+        }
+        chip.buttonChipToggle.setActivated(activated);
+        updateToggleVisuals(chip);
+    }
+
+    private void applyChemicalChipFromChecklist(int chemIndex, float amount) {
+        ItemMaintenanceChipRowBinding chip = chemChipBindings[chemIndex];
+        if (chip == null) {
+            return;
+        }
+        chemStoredAmounts[chemIndex] = amount > 0f ? amount : 0f;
+        chip.buttonChipToggle.setActivated(amount > 0f);
+        refreshChemicalLabel(chip, chemIndex);
+        updateToggleVisuals(chip);
     }
 
     private static final class CustomLineVm {
@@ -257,7 +292,7 @@ public class MaintenanceDetailsActivity extends AppCompatActivity {
     private void showAddCustomItemDialog() {
         DialogAddCustomMaintenanceItemBinding dialogBinding =
                 DialogAddCustomMaintenanceItemBinding.inflate(getLayoutInflater());
-        AlertDialog dialog = new MaterialAlertDialogBuilder(this)
+        AlertDialog dialog = new MaterialAlertDialogBuilder(this, R.style.ThemeOverlay_SoakSafe_AlertDialog)
                 .setTitle(R.string.add_custom_maintenance_item_title)
                 .setView(dialogBinding.getRoot())
                 .setNegativeButton(android.R.string.cancel, (d, w) -> d.dismiss())
@@ -346,7 +381,7 @@ public class MaintenanceDetailsActivity extends AppCompatActivity {
 
     private void showChemicalAmountDialog(@NonNull ItemMaintenanceChipRowBinding chip, int chemIndex) {
         DialogChemicalAmountBinding dialogBinding = DialogChemicalAmountBinding.inflate(getLayoutInflater());
-        AlertDialog dialog = new MaterialAlertDialogBuilder(this)
+        AlertDialog dialog = new MaterialAlertDialogBuilder(this, R.style.ThemeOverlay_SoakSafe_AlertDialog)
                 .setTitle(R.string.maintenance_chemical_amount_dialog_title)
                 .setView(dialogBinding.getRoot())
                 .setNegativeButton(android.R.string.cancel, (d, w) -> d.dismiss())

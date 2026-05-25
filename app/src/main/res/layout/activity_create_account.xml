@@ -160,29 +160,28 @@
 
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/button_pool_fresh"
-                            style="@style/Widget.Material3.Button.OutlinedButton"
+                            style="@style/Widget.SoakSafe.OutlinedToggleButton"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:insetTop="0dp"
                             android:insetBottom="0dp"
-                            android:text="@string/pool_type_fresh_water"
-                            app:strokeColor="?attr/colorPrimary" />
+                            android:text="@string/pool_type_fresh_water" />
 
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/button_pool_salt"
-                            style="@style/Widget.Material3.Button.OutlinedButton"
+                            style="@style/Widget.SoakSafe.OutlinedToggleButton"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:insetTop="0dp"
                             android:insetBottom="0dp"
-                            android:text="@string/pool_type_salt_water"
-                            app:strokeColor="?attr/colorPrimary" />
+                            android:text="@string/pool_type_salt_water" />
                     </com.google.android.material.button.MaterialButtonToggleGroup>
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/button_save_account"
+                        style="@style/Widget.SoakSafe.SaveButton"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="24dp"

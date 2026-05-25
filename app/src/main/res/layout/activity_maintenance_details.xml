@@ -80,15 +80,12 @@
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/button_save_maintenance"
-                    style="@style/Widget.Material3.Button.UnelevatedButton"
+                    style="@style/Widget.SoakSafe.SaveButton"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="20dp"
                     android:layout_marginBottom="12dp"
-                    android:text="@string/save_maintenance"
-                    android:textColor="@color/maint_save_button_text"
-                    app:backgroundTint="@color/maint_save_button"
-                    app:rippleColor="#660A1628" />
+                    android:text="@string/save_maintenance" />
             </LinearLayout>
         </androidx.core.widget.NestedScrollView>
 
@@ -142,6 +139,7 @@
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/fab_add_custom_item"
+            style="@style/Widget.SoakSafe.AddFab"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|end"
@@ -150,11 +148,9 @@
             android:contentDescription="@string/fab_add_custom_maintenance_item_content_description"
             android:elevation="12dp"
             android:translationZ="12dp"
-            app:backgroundTint="@color/maint_save_button"
             app:borderWidth="0dp"
             app:elevation="12dp"
             app:srcCompat="@drawable/ic_add_24"
-            app:tint="@color/maint_save_button_text"
             app:useCompatPadding="false" />
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </FrameLayout>

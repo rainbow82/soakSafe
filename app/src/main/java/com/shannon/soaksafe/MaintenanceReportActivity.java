@@ -15,7 +15,9 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import androidx.appcompat.app.AlertDialog;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.shannon.soaksafe.databinding.DialogPdfReadyBinding;
 import com.google.android.material.snackbar.Snackbar;
 import com.shannon.soaksafe.data.MaintenanceEvent;
 import com.shannon.soaksafe.data.MaintenanceRepository;
@@ -241,21 +243,18 @@ public class MaintenanceReportActivity extends AppCompatActivity {
 
     private void showPdfReadyDialog(@NonNull File file) {
         pendingExportFile = file;
-        new MaterialAlertDialogBuilder(this)
-                .setTitle(R.string.pdf_export_ready_title)
-                .setItems(
-                        new CharSequence[]{
-                                getString(R.string.pdf_action_share),
-                                getString(R.string.pdf_action_save)
-                        },
-                        (d, which) -> {
-                            if (which == 0) {
-                                MaintenanceReportExportHelper.sharePdf(this, file);
-                            } else {
-                                savePdfLauncher.launch("SoakSafe_maintenance_report.pdf");
-                            }
-                        }
-                )
-                .show();
+        DialogPdfReadyBinding sheet = DialogPdfReadyBinding.inflate(getLayoutInflater());
+        AlertDialog dialog = new MaterialAlertDialogBuilder(this, R.style.ThemeOverlay_SoakSafe_AlertDialog)
+                .setView(sheet.getRoot())
+                .create();
+        sheet.buttonPdfShare.setOnClickListener(v -> {
+            MaintenanceReportExportHelper.sharePdf(this, file);
+            dialog.dismiss();
+        });
+        sheet.buttonPdfSave.setOnClickListener(v -> {
+            savePdfLauncher.launch("SoakSafe_maintenance_report.pdf");
+            dialog.dismiss();
+        });
+        dialog.show();
     }
 }

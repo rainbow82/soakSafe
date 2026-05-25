@@ -10,7 +10,7 @@ import androidx.room.RoomDatabase;
                 MaintenanceChecklist.class,
                 MaintenanceEvent.class
         },
-        version = 9,
+        version = 10,
         exportSchema = false
 )
 public abstract class SoakSafeDatabase extends RoomDatabase {

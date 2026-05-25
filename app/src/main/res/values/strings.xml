@@ -98,6 +98,9 @@
     <string name="pool_type_label">Pool type</string>
     <string name="pool_type_fresh_water">Fresh water</string>
     <string name="pool_type_salt_water">Salt water</string>
+    <string name="pool_installation_label">Installation</string>
+    <string name="pool_type_above_ground">Above ground</string>
+    <string name="pool_type_in_ground">In-ground</string>
     <string name="error_pool_size_invalid">Enter your pool size as a whole number greater than zero.</string>
     <string name="maintenance_report_title">Maintenance Report</string>
     <string name="report_search_hint">Search tasks and chemicals</string>

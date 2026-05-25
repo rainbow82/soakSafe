@@ -5,7 +5,6 @@ import android.content.Context;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.shannon.soaksafe.R;
 import com.shannon.soaksafe.data.EventLineItem;
 import com.shannon.soaksafe.data.EventLineItemsCodec;
 import com.shannon.soaksafe.data.MaintenanceEvent;
@@ -79,54 +78,8 @@ public final class ReportEventRowsFactory {
 
     @NonNull
     public static List<ReportDetailLine> buildDetailRows(@NonNull Context context, @NonNull MaintenanceEvent row) {
-        String json = row.getLineItemsJson();
-        if (json != null && !json.trim().isEmpty()) {
-            return buildDetailRowsFromJson(json);
-        }
         List<ReportDetailLine> lines = new ArrayList<>();
-        if (row.isVacuum()) {
-            lines.add(ReportDetailLine.taskDone(context.getString(R.string.task_vacuum)));
-        }
-        if (row.isCleanSkimmer()) {
-            lines.add(ReportDetailLine.taskDone(context.getString(R.string.task_clean_skimmer)));
-        }
-        if (row.isAddWater()) {
-            lines.add(ReportDetailLine.taskDone(context.getString(R.string.task_add_water)));
-        }
-        if (row.isBrushWalls()) {
-            lines.add(ReportDetailLine.taskDone(context.getString(R.string.task_brush_walls)));
-        }
-        if (row.getChlorine() > 0f) {
-            lines.add(ReportDetailLine.chemical(
-                    context.getString(R.string.chemical_chlorine),
-                    formatChem(row.getChlorine())
-            ));
-        }
-        if (row.getPhUp() > 0f) {
-            lines.add(ReportDetailLine.chemical(
-                    context.getString(R.string.chemical_ph_up),
-                    formatChem(row.getPhUp())
-            ));
-        }
-        if (row.getPhDown() > 0f) {
-            lines.add(ReportDetailLine.chemical(
-                    context.getString(R.string.chemical_ph_down),
-                    formatChem(row.getPhDown())
-            ));
-        }
-        if (row.getNoPhos() > 0f) {
-            lines.add(ReportDetailLine.chemical(
-                    context.getString(R.string.chemical_no_phos),
-                    formatChem(row.getNoPhos())
-            ));
-        }
-        return lines;
-    }
-
-    @NonNull
-    private static List<ReportDetailLine> buildDetailRowsFromJson(@NonNull String json) {
-        List<ReportDetailLine> lines = new ArrayList<>();
-        for (EventLineItem item : EventLineItemsCodec.decode(json)) {
+        for (EventLineItem item : EventLineItemsCodec.resolveLineItems(context, row)) {
             if (item.amount == null) {
                 lines.add(ReportDetailLine.taskDone(item.label));
             } else if (item.amount > 0f) {

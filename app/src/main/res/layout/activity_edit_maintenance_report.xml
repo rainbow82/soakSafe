@@ -14,107 +14,116 @@
         android:background="@android:color/transparent">
 
         <com.google.android.material.appbar.AppBarLayout
+            android:id="@+id/app_bar_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/maint_surface"
-            android:elevation="0dp"
+            android:background="@color/frosted_surface_edit"
+            app:elevation="2dp"
             app:liftOnScroll="false">
 
             <com.google.android.material.appbar.MaterialToolbar
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
-                app:navigationIconTint="@color/maint_text_primary"
+                android:background="@color/frosted_surface_edit"
+                app:navigationIconTint="?attr/colorOnSurface"
                 app:title="@string/edit_report_title"
                 app:titleTextAppearance="@style/TextAppearance.SoakSafe.ToolbarTitle"
-                app:titleTextColor="@color/maint_text_primary" />
+                app:titleTextColor="?attr/colorOnSurface" />
         </com.google.android.material.appbar.AppBarLayout>
 
         <androidx.core.widget.NestedScrollView
             android:id="@+id/scroll_edit_report"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:background="@android:color/transparent"
             android:clipToPadding="false"
+            android:paddingStart="16dp"
+            android:paddingTop="8dp"
+            android:paddingEnd="16dp"
             android:paddingBottom="96dp"
             app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-            <LinearLayout
+            <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:paddingHorizontal="20dp"
-                android:paddingTop="8dp">
+                app:cardBackgroundColor="@color/frosted_surface_edit"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="2dp"
+                app:strokeColor="@color/frosted_outline"
+                app:strokeWidth="1dp">
 
-                <TextView
-                    android:id="@+id/text_edit_report_timestamp"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:paddingVertical="8dp"
-                    android:textAppearance="?attr/textAppearanceBodyLarge"
-                    android:textColor="@android:color/white"
-                    android:textSize="16sp"
-                    tools:text="05/07/2026 11:35 AM" />
+                    android:orientation="vertical"
+                    android:padding="24dp">
 
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:paddingBottom="8dp"
-                    android:text="@string/edit_report_tasks_hint"
-                    android:textColor="@color/maint_text_primary"
-                    android:textSize="14sp" />
-
-                <com.google.android.material.card.MaterialCardView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:cardBackgroundColor="@color/maint_surface"
-                    app:cardCornerRadius="8dp"
-                    app:cardElevation="0dp"
-                    app:strokeColor="@color/maint_outline"
-                    app:strokeWidth="1dp">
-
-                    <LinearLayout
-                        android:id="@+id/container_edit_chips"
+                    <TextView
+                        android:id="@+id/text_edit_report_timestamp"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:divider="@drawable/bg_maintenance_chips_row_divider"
-                        android:orientation="vertical"
-                        android:showDividers="middle" />
-                </com.google.android.material.card.MaterialCardView>
+                        android:textAppearance="?attr/textAppearanceTitleMedium"
+                        android:textColor="?attr/colorOnSurface"
+                        tools:text="05/07/2026 11:35 AM" />
 
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/button_save_edit_report"
-                    style="@style/Widget.Material3.Button.UnelevatedButton"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="20dp"
-                    android:text="@string/save_maintenance"
-                    android:textColor="@color/maint_save_button_text"
-                    app:backgroundTint="@color/maint_save_button"
-                    app:rippleColor="#660A1628" />
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:layout_marginBottom="12dp"
+                        android:text="@string/edit_report_tasks_hint"
+                        android:textAppearance="?attr/textAppearanceBodyMedium"
+                        android:textColor="?attr/colorOnSurfaceVariant" />
 
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/button_delete_report"
-                    style="@style/Widget.Material3.Button.OutlinedButton"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="12dp"
-                    android:layout_marginBottom="24dp"
-                    android:text="@string/delete_report"
-                    android:textColor="@color/maint_text_primary"
-                    app:strokeColor="@color/maint_outline" />
-            </LinearLayout>
+                    <com.google.android.material.card.MaterialCardView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:cardBackgroundColor="@color/frosted_surface_high"
+                        app:cardCornerRadius="12dp"
+                        app:cardElevation="0dp"
+                        app:strokeColor="@color/frosted_outline"
+                        app:strokeWidth="1dp">
+
+                        <LinearLayout
+                            android:id="@+id/container_edit_chips"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:divider="@drawable/bg_maintenance_chips_row_divider"
+                            android:orientation="vertical"
+                            android:showDividers="middle" />
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/button_save_edit_report"
+                        style="@style/Widget.SoakSafe.SaveButton"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="24dp"
+                        android:text="@string/save_maintenance" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/button_delete_report"
+                        style="@style/Widget.Material3.Button.OutlinedButton"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:text="@string/delete_report"
+                        android:textColor="?attr/colorOnSurface"
+                        app:strokeColor="@color/frosted_outline" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
         </androidx.core.widget.NestedScrollView>
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/fab_add_line"
+            style="@style/Widget.SoakSafe.AddFab"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|end"
             android:layout_marginEnd="20dp"
             android:layout_marginBottom="24dp"
             android:contentDescription="@string/fab_add_line_content_description"
-            app:backgroundTint="@color/maint_save_button"
-            app:srcCompat="@drawable/ic_add_24"
-            app:tint="@color/maint_save_button_text" />
+            app:srcCompat="@drawable/ic_add_24" />
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </FrameLayout>

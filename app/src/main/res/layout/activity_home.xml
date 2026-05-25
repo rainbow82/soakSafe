@@ -123,11 +123,13 @@
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@id/input_layout_password"
+                        app:thumbTint="@color/home_biometric_switch_thumb"
+                        app:trackTint="@color/home_biometric_switch_track"
                         tools:visibility="visible" />
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/button_biometric_sign_in"
-                        style="@style/Widget.Material3.Button.OutlinedButton"
+                        style="@style/Widget.SoakSafe.OutlinedButton"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="12dp"
@@ -136,15 +138,14 @@
                         app:icon="@drawable/ic_fingerprint_24"
                         app:iconGravity="textStart"
                         app:iconPadding="8dp"
-                        app:iconTint="?attr/colorPrimary"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@id/switch_biometric_login"
-                        app:strokeColor="?attr/colorPrimary"
                         tools:visibility="visible" />
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/button_sign_in"
+                        style="@style/Widget.SoakSafe.SaveButton"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="24dp"
@@ -155,7 +156,7 @@
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/button_create_account"
-                        style="@style/Widget.Material3.Button.OutlinedButton"
+                        style="@style/Widget.SoakSafe.OutlinedButton"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="12dp"
@@ -164,8 +165,7 @@
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@id/button_sign_in"
-                        app:layout_constraintVertical_bias="0"
-                        app:strokeColor="?attr/colorPrimary" />
+                        app:layout_constraintVertical_bias="0" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
             </com.google.android.material.card.MaterialCardView>
         </androidx.constraintlayout.widget.ConstraintLayout>

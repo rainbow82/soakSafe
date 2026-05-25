@@ -35,7 +35,8 @@ public class SoakSafeApplication extends Application {
                         SoakSafeDatabaseMigrations.MIGRATION_5_6,
                         SoakSafeDatabaseMigrations.MIGRATION_6_7,
                         SoakSafeDatabaseMigrations.MIGRATION_7_8,
-                        SoakSafeDatabaseMigrations.MIGRATION_8_9
+                        SoakSafeDatabaseMigrations.MIGRATION_8_9,
+                        SoakSafeDatabaseMigrations.MIGRATION_9_10
                 )
                 .build();
         userRepository = new UserRepository(db.userDao());

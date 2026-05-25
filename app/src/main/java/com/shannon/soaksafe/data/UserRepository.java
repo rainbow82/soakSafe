@@ -127,6 +127,7 @@ public class UserRepository extends AsyncRepositoryBase {
             @NonNull String username,
             int poolSizeGallons,
             boolean poolSaltWater,
+            boolean poolAboveGround,
             @NonNull UpdateProfileCallback callback
     ) {
         String u = username.trim();
@@ -149,10 +150,11 @@ public class UserRepository extends AsyncRepositoryBase {
             if (!row.getUsername().equalsIgnoreCase(u) && userDao.countByUsernameForOtherUser(u, userId) > 0) {
                 result = UpdateProfileResult.USERNAME_TAKEN;
             } else {
-                userDao.updateProfile(userId, u, poolSizeGallons, poolSaltWater);
+                userDao.updateProfile(userId, u, poolSizeGallons, poolSaltWater, poolAboveGround);
                 row.setUsername(u);
                 row.setPoolSizeGallons(poolSizeGallons);
                 row.setPoolSaltWater(poolSaltWater);
+                row.setPoolAboveGround(poolAboveGround);
                 updated = row;
                 result = UpdateProfileResult.SUCCESS;
             }

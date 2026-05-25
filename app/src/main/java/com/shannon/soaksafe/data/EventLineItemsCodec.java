@@ -160,6 +160,26 @@ public final class EventLineItemsCodec {
         }
     }
 
+    /**
+     * Prefer {@code line_items_json} when it contains rows; otherwise rebuild from legacy
+     * checklist columns on the event (same rules as edit-report and report cards).
+     */
+    @NonNull
+    public static List<EventLineItem> resolveLineItems(
+            @NonNull Context context,
+            @NonNull MaintenanceEvent event
+    ) {
+        List<EventLineItem> items = new ArrayList<>();
+        String json = event.getLineItemsJson();
+        if (json != null && !json.trim().isEmpty() && !"[]".equals(json.trim())) {
+            items.addAll(decode(json));
+        }
+        if (items.isEmpty()) {
+            items.addAll(fromLegacyEvent(event, context));
+        }
+        return items;
+    }
+
     @NonNull
     private static String trimmedAmount(float value) {
         if (value == (long) value) {

@@ -97,6 +97,10 @@ public class ProfileActivity extends AppCompatActivity {
             }
             binding.editUsername.setText(user.getUsername());
             binding.editPoolSize.setText(String.valueOf(user.getPoolSizeGallons()));
+            int installationId = user.isPoolAboveGround()
+                    ? R.id.button_pool_above_ground
+                    : R.id.button_pool_in_ground;
+            binding.togglePoolInstallation.check(installationId);
             int poolTypeId = user.isPoolSaltWater() ? R.id.button_pool_salt : R.id.button_pool_fresh;
             binding.togglePoolType.check(poolTypeId);
             profileImagePicker.bindExisting(userId);
@@ -125,6 +129,13 @@ public class ProfileActivity extends AppCompatActivity {
             return;
         }
 
+        int checkedInstallation = binding.togglePoolInstallation.getCheckedButtonId();
+        if (checkedInstallation == View.NO_ID) {
+            Snackbar.make(binding.getRoot(), R.string.error_pool_size_invalid, Snackbar.LENGTH_LONG).show();
+            return;
+        }
+        boolean poolAboveGround = checkedInstallation == R.id.button_pool_above_ground;
+
         int checkedType = binding.togglePoolType.getCheckedButtonId();
         if (checkedType == View.NO_ID) {
             Snackbar.make(binding.getRoot(), R.string.error_pool_size_invalid, Snackbar.LENGTH_LONG).show();
@@ -137,6 +148,7 @@ public class ProfileActivity extends AppCompatActivity {
                 username,
                 poolSizeGallons,
                 poolSaltWater,
+                poolAboveGround,
                 (result, updatedUser) -> {
                     switch (result) {
                         case SUCCESS:

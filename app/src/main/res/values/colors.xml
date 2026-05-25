@@ -6,6 +6,9 @@
     <!-- Frosted glass surfaces (~66–69% white) — 25% more transparent than original 88–92% -->
     <color name="frosted_surface">#A8FFFFFF</color>
     <color name="frosted_surface_high">#B0FFFFFF</color>
+    <!-- Edit report: slightly more frost for readability without losing the glass look -->
+    <color name="frosted_surface_edit">#E0FFFFFF</color>
+    <color name="dialog_surface">#FFFFFF</color>
     <color name="frosted_outline">#66CBD5E1</color>
     <color name="frosted_divider">#40CBD5E1</color>
     <!-- Home / auth forms (alias frosted for theme + TextInput backgrounds) -->

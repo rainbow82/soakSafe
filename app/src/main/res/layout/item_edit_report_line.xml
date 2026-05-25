@@ -20,7 +20,8 @@
         android:hint="@string/edit_line_item_hint"
         android:inputType="textCapSentences"
         android:maxLines="2"
-        android:textColor="@color/maint_text_primary"
+        android:textColor="?attr/colorOnSurface"
+        android:textColorHint="?attr/colorOnSurfaceVariant"
         android:textSize="15sp"
         tools:text="Vacuum" />
 
@@ -34,7 +35,8 @@
         android:importantForAutofill="no"
         android:inputType="numberDecimal|numberSigned"
         android:maxLines="1"
-        android:textColor="@color/maint_text_primary"
+        android:textColor="?attr/colorOnSurface"
+        android:textColorHint="?attr/colorOnSurfaceVariant"
         android:textSize="14sp"
         tools:text="2" />
 
@@ -47,5 +49,5 @@
         android:contentDescription="@string/edit_line_remove"
         android:padding="12dp"
         app:srcCompat="@drawable/ic_delete_24"
-        app:tint="@color/maint_text_primary" />
+        app:tint="?attr/colorOnSurfaceVariant" />
 </LinearLayout>

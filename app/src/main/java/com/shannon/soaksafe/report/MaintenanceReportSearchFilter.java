@@ -1,12 +1,11 @@
 package com.shannon.soaksafe.report;
 
 import android.content.Context;
-import android.content.res.Resources;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.shannon.soaksafe.R;
+import com.shannon.soaksafe.data.EventLineItem;
 import com.shannon.soaksafe.data.EventLineItemsCodec;
 import com.shannon.soaksafe.data.MaintenanceEvent;
 
@@ -18,10 +17,10 @@ import java.util.Locale;
  */
 public final class MaintenanceReportSearchFilter {
 
-    private final Resources resources;
+    private final Context appContext;
 
     public MaintenanceReportSearchFilter(@NonNull Context context) {
-        this.resources = context.getApplicationContext().getResources();
+        this.appContext = context.getApplicationContext();
     }
 
     public boolean matches(@NonNull MaintenanceEvent event, @Nullable String rawQuery) {
@@ -58,41 +57,17 @@ public final class MaintenanceReportSearchFilter {
     @NonNull
     private String buildHaystack(@NonNull MaintenanceEvent e) {
         StringBuilder sb = new StringBuilder();
-        EventLineItemsCodec.appendJsonHaystack(sb, e.getLineItemsJson());
-        if (e.isVacuum()) {
-            sb.append(resources.getString(R.string.task_vacuum)).append(' ');
+        for (EventLineItem item : EventLineItemsCodec.resolveLineItems(appContext, e)) {
+            sb.append(item.label).append(' ');
+            if (item.amount != null) {
+                sb.append(trimmedAmount(item.amount)).append(' ');
+            }
         }
-        if (e.isCleanSkimmer()) {
-            sb.append(resources.getString(R.string.task_clean_skimmer)).append(' ');
-        }
-        if (e.isAddWater()) {
-            sb.append(resources.getString(R.string.task_add_water)).append(' ');
-        }
-        if (e.isBrushWalls()) {
-            sb.append(resources.getString(R.string.task_brush_walls)).append(' ');
-        }
-        appendChemicalIfPresent(sb, e.getChlorine(), R.string.chemical_chlorine);
-        appendChemicalIfPresent(sb, e.getPhUp(), R.string.chemical_ph_up);
-        appendChemicalIfPresent(sb, e.getPhDown(), R.string.chemical_ph_down);
-        appendChemicalIfPresent(sb, e.getNoPhos(), R.string.chemical_no_phos);
-
         String type = e.getEventType();
         if (!type.isEmpty()) {
             sb.append(type.toLowerCase(Locale.US)).append(' ');
         }
         return sb.toString();
-    }
-
-    private void appendChemicalIfPresent(
-            @NonNull StringBuilder sb,
-            float amount,
-            int labelRes
-    ) {
-        if (amount <= 0f) {
-            return;
-        }
-        sb.append(resources.getString(labelRes)).append(' ');
-        sb.append(trimmedAmount(amount)).append(' ');
     }
 
     @NonNull
