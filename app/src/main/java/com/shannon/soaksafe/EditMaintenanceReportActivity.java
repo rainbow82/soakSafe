@@ -18,6 +18,7 @@ import com.shannon.soaksafe.data.MaintenanceEvent;
 import com.shannon.soaksafe.data.MaintenanceRepository;
 import com.shannon.soaksafe.databinding.ActivityEditMaintenanceReportBinding;
 import com.shannon.soaksafe.databinding.DialogAddReportLineBinding;
+import com.shannon.soaksafe.databinding.DialogDeleteReportBinding;
 import com.shannon.soaksafe.databinding.ItemEditReportLineBinding;
 import com.shannon.soaksafe.util.AppBarInsetsHelper;
 
@@ -230,16 +231,18 @@ public class EditMaintenanceReportActivity extends AppCompatActivity {
     }
 
     private void confirmDelete() {
-        new MaterialAlertDialogBuilder(this, R.style.ThemeOverlay_SoakSafe_AlertDialog)
-                .setTitle(R.string.delete_report)
-                .setMessage(R.string.delete_report_confirm)
-                .setNegativeButton(android.R.string.cancel, (d, w) -> d.dismiss())
-                .setPositiveButton(R.string.delete_report_button, (d, w) -> {
-                    maintenanceRepository.deleteEvent(eventId, userId, () -> {
-                        Snackbar.make(binding.getRoot(), R.string.report_deleted, Snackbar.LENGTH_SHORT).show();
-                        finish();
-                    });
-                })
-                .show();
+        DialogDeleteReportBinding sheet = DialogDeleteReportBinding.inflate(getLayoutInflater());
+        AlertDialog dialog = new MaterialAlertDialogBuilder(this, R.style.ThemeOverlay_SoakSafe_AlertDialog)
+                .setView(sheet.getRoot())
+                .create();
+        sheet.buttonDeleteCancel.setOnClickListener(v -> dialog.dismiss());
+        sheet.buttonDeleteConfirm.setOnClickListener(v -> {
+            dialog.dismiss();
+            maintenanceRepository.deleteEvent(eventId, userId, () -> {
+                Snackbar.make(binding.getRoot(), R.string.report_deleted, Snackbar.LENGTH_SHORT).show();
+                finish();
+            });
+        });
+        dialog.show();
     }
 }
